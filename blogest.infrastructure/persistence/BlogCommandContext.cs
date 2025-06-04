@@ -1,0 +1,22 @@
+﻿namespace blogest.infrastructure.persistence
+{
+    public class BlogCommandContext : DbContext
+    {
+		public DbSet<Post> Posts { get; set; }
+		public DbSet<Comment> Comments { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<RefreshToken> RefreshTokens { get; set; }
+		public DbSet<Category> Categories { get; set; }
+		public DbSet<PostCategory> PostCategories { get; set; }
+		public BlogCommandContext(DbContextOptions<BlogCommandContext> options) : base(options)
+		{}
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.ApplyConfiguration(new PostConfigurations());
+			modelBuilder.ApplyConfiguration(new CommentConfiguration());
+			modelBuilder.ApplyConfiguration(new PostCategoryConfiguration());
+			modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+			modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+		}
+	}
+}

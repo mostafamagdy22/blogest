@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "hmUUWQT7zIs=",
+  "success": true,
+  "projectFilePath": "D:\\projects\\Blogest\\blogest.api\\blogest.api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\B.TECH\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.5\\microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
+    "C:\\Users\\B.TECH\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

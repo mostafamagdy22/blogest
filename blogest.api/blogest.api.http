@@ -1,0 +1,6 @@
+@blogest.api_HostAddress = http://localhost:5294
+
+GET {{blogest.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

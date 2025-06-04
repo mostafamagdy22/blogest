@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "4fVenT9G6/qBOp/jQ0Ijj8uo3hwNl6zSNKnaj2BemiQ=",
+  "Source": "blogest.api",
+  "BasePath": "_content/blogest.api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

@@ -1,0 +1,15 @@
+D:\projects\Blogest\blogest.application\bin\Debug\net9.0\blogest.application.deps.json
+D:\projects\Blogest\blogest.application\bin\Debug\net9.0\blogest.application.dll
+D:\projects\Blogest\blogest.application\bin\Debug\net9.0\blogest.application.pdb
+D:\projects\Blogest\blogest.application\bin\Debug\net9.0\blogest.domain.dll
+D:\projects\Blogest\blogest.application\bin\Debug\net9.0\blogest.domain.pdb
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.csproj.AssemblyReference.cache
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.AssemblyInfoInputs.cache
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.AssemblyInfo.cs
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.csproj.CoreCompileInputs.cache
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest..2AE1EC1D.Up2Date
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.dll
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\refint\blogest.application.dll
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\blogest.application.pdb
+D:\projects\Blogest\blogest.application\obj\Debug\net9.0\ref\blogest.application.dll

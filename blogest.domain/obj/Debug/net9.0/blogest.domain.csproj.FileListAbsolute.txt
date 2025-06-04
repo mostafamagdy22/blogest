@@ -1,0 +1,11 @@
+D:\projects\Blogest\blogest.domain\bin\Debug\net9.0\blogest.domain.deps.json
+D:\projects\Blogest\blogest.domain\bin\Debug\net9.0\blogest.domain.dll
+D:\projects\Blogest\blogest.domain\bin\Debug\net9.0\blogest.domain.pdb
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.AssemblyInfoInputs.cache
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.AssemblyInfo.cs
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.csproj.CoreCompileInputs.cache
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.dll
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\refint\blogest.domain.dll
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\blogest.domain.pdb
+D:\projects\Blogest\blogest.domain\obj\Debug\net9.0\ref\blogest.domain.dll
