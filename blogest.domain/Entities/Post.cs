@@ -17,7 +17,11 @@ namespace blogest.domain.Entities
 		public User User { get; set; }
 		public List<Comment>? Comments { get; set; }
 		public List<PostCategory> PostCategories { get; set; }
-		public Post(Guid id,string title,string content,DateTime? publishedAt)
+		public Post()
+		{
+			
+		}
+		public Post(Guid id, string title, string content, DateTime? publishedAt)
 		{
 			SetId(id);
 			SetTitle(title);

@@ -13,7 +13,7 @@ namespace blogest.domain.Entities
 		public DateTime PublishedAt { get; private set; }
 		public Guid PostId { get; private set; }
 		public Post Post { get; set; }
-
+		public Comment(){}
 		public Comment(Guid id,string content,Guid postId)
 		{
 			PublishedAt = DateTime.UtcNow;

@@ -5,6 +5,7 @@
 		public int Id { get; set; }
 		public string Title { get; private set; }
 		public List<PostCategory>? PostCategories { get; set; }
+		public Category(){}
 		public Category(string title)
 		{
 			SetTitle(title);

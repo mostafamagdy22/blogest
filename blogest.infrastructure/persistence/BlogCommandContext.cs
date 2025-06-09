@@ -1,10 +1,14 @@
-﻿namespace blogest.infrastructure.persistence
+﻿using blogest.infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+namespace blogest.infrastructure.persistence
 {
-    public class BlogCommandContext : DbContext
-    {
+    public class BlogCommandContext : IdentityDbContext<AppUser,IdentityRole<Guid>,Guid>
+	{
 		public DbSet<Post> Posts { get; set; }
 		public DbSet<Comment> Comments { get; set; }
-		public DbSet<User> Users { get; set; }
+		public DbSet<AppUser> DomainUsers { get; set; }
 		public DbSet<RefreshToken> RefreshTokens { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<PostCategory> PostCategories { get; set; }
@@ -12,6 +16,7 @@
 		{}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			base.OnModelCreating(modelBuilder);
 			modelBuilder.ApplyConfiguration(new PostConfigurations());
 			modelBuilder.ApplyConfiguration(new CommentConfiguration());
 			modelBuilder.ApplyConfiguration(new PostCategoryConfiguration());

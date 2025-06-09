@@ -1,4 +1,5 @@
-﻿using blogest.infrastructure.persistence;
+﻿using blogest.infrastructure.Mapping;
+using blogest.infrastructure.persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,13 +11,17 @@ namespace blogest.infrastructure
         {
             services.AddDbContext<BlogCommandContext>(options =>
 			{
-				options.UseSqlServer(configuration.GetConnectionString("Default"));
+				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("blogest.infrastructure"));
 			});
 
             services.AddDbContext<BlogQueryContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("Default"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("blogest.infrastructure"));
             });
+
+            services.AddAutoMapper(typeof(MappingProfile));
 
 			return services;
         }
