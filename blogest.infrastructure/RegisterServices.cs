@@ -1,19 +1,34 @@
-﻿using blogest.infrastructure.Mapping;
+﻿using blogest.application.Interfaces.repositories;
+using blogest.application.Interfaces.services;
+using blogest.infrastructure.Mapping;
 using blogest.infrastructure.persistence;
+using blogest.infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+using blogest.infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using blogest.infrastructure.Identity;
 
 namespace blogest.infrastructure
 {
     public static class RegisterServices
     {
-        public static IServiceCollection AddInfraStructure(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddInfraStructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddDbContext<BlogCommandContext>(options =>
-			{
-				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+            {
+                var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+                var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+                var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+                var connectionString = $"Server={dbServer};Database=blogestCommand;User Id={dbUser};Password={dbPassword};TrustServerCertificate=True;";
+                options.UseSqlServer(connectionString,
                 x => x.MigrationsAssembly("blogest.infrastructure"));
-			});
+            });
 
             services.AddDbContext<BlogQueryContext>(options =>
             {
@@ -21,9 +36,20 @@ namespace blogest.infrastructure
                 x => x.MigrationsAssembly("blogest.infrastructure"));
             });
 
-            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredUniqueChars = 0;
+            })
+            .AddEntityFrameworkStores<BlogCommandContext>()
+            .AddDefaultTokenProviders();
 
-			return services;
+            services.AddAutoMapper(typeof(MappingProfile).Assembly, typeof(MappingApplicationProfile).Assembly);
+
+            return services;
         }
     }
 }
