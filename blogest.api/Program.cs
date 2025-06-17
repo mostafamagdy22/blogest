@@ -2,6 +2,11 @@ using blogest.infrastructure;
 using blogest.application.Interfaces.services;
 using Serilog;
 using blogest.api.Middlewares;
+using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,19 @@ builder.Host.UseSerilog();
 builder.Services.AddInfraStructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = "";
+    options.ClientSecret = "";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

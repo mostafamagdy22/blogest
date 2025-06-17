@@ -199,9 +199,6 @@ namespace blogest.infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -220,8 +217,6 @@ namespace blogest.infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("PostId");
-
-                    b.HasIndex("AppUserId");
 
                     b.HasIndex("UserId");
 
@@ -249,9 +244,6 @@ namespace blogest.infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -273,37 +265,9 @@ namespace blogest.infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
-                });
-
-            modelBuilder.Entity("blogest.domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>
@@ -441,15 +405,9 @@ namespace blogest.infrastructure.Migrations
                 {
                     b.HasOne("blogest.infrastructure.Identity.AppUser", null)
                         .WithMany("Posts")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("blogest.domain.Entities.User", "User")
-                        .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("blogest.domain.Entities.PostCategory", b =>
@@ -475,15 +433,9 @@ namespace blogest.infrastructure.Migrations
                 {
                     b.HasOne("blogest.infrastructure.Identity.AppUser", null)
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("blogest.domain.Entities.User", "User")
-                        .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("blogest.domain.Entities.Category", b =>
@@ -496,13 +448,6 @@ namespace blogest.infrastructure.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("PostCategories");
-                });
-
-            modelBuilder.Entity("blogest.domain.Entities.User", b =>
-                {
-                    b.Navigation("Posts");
-
-                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>

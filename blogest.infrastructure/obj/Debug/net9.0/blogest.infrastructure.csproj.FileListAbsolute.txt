@@ -1,4 +1,5 @@
 /home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.infrastructure.deps.json
+/home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.infrastructure.runtimeconfig.json
 /home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.infrastructure.dll
 /home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.infrastructure.pdb
 /home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.application.dll
@@ -15,6 +16,5 @@
 /home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/blogest.infrastructure.dll
 /home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/refint/blogest.infrastructure.dll
 /home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/blogest.infrastructure.pdb
-/home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/ref/blogest.infrastructure.dll
-/home/mostafa/projects/blogest/blogest.infrastructure/bin/Debug/net9.0/blogest.infrastructure.runtimeconfig.json
 /home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/blogest.infrastructure.genruntimeconfig.cache
+/home/mostafa/projects/blogest/blogest.infrastructure/obj/Debug/net9.0/ref/blogest.infrastructure.dll

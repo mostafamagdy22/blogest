@@ -9,9 +9,8 @@ namespace blogest.domain.Entities
     public class RefreshToken
     {
 		public Guid Id { get; set; }
-		public Guid UserId { get; set; }
-		public User User { get; set; }
 		public string Token { get; set; }
+		public Guid UserId { get; set; }
 		public DateTime ExpiresAt { get; set; }
 		public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 		public DateTime? RevokedAt { get; private set; }

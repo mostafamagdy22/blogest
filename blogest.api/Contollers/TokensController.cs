@@ -1,0 +1,24 @@
+using blogest.application.DTOs.responses;
+using blogest.application.Features.commands;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace blogest.api.Contollers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class TokensController : ControllerBase
+    {
+        private readonly Mediator _mediator;
+        public TokensController(Mediator mediator)
+        {
+            _mediator = mediator;
+        }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> Refresh(TokenRequestCommand request)
+        {
+            RefreshTokenResponse result = await _mediator.Send(request);
+            return Ok(result);
+        }
+    }
+}

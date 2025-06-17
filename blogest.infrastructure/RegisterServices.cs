@@ -17,6 +17,8 @@ namespace blogest.infrastructure
     {
         public static IServiceCollection AddInfraStructure(this IServiceCollection services, IConfiguration configuration)
         {
+            DotNetEnv.Env.Load();
+            services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsersRepository, UsersRepository>();
@@ -35,7 +37,7 @@ namespace blogest.infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("blogest.infrastructure"));
             });
-
+            
             services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;

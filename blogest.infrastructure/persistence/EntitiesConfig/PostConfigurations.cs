@@ -1,4 +1,6 @@
-﻿namespace blogest.infrastructure.persistence.EntitiesConfig
+﻿using blogest.infrastructure.Identity;
+
+namespace blogest.infrastructure.persistence.EntitiesConfig
 {
 	public class PostConfigurations : IEntityTypeConfiguration<Post>
 	{
@@ -13,7 +15,7 @@
 				.HasColumnType("nvarchar(max)");
 			builder.Property(p => p.IsPublish)
 				.IsRequired();
-			builder.HasOne(p => p.User)
+			builder.HasOne<AppUser>()
 				.WithMany(u => u.Posts)
 				.HasForeignKey(p => p.UserId)
 				.OnDelete(DeleteBehavior.Cascade);

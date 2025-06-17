@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using blogest.application.DTOs.responses;
@@ -8,26 +9,67 @@ using blogest.application.Features.commands;
 using blogest.application.Interfaces.services;
 using blogest.infrastructure.Identity;
 using blogest.infrastructure.persistence;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-
+using System.Web;
 namespace blogest.infrastructure.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
-        public AuthService(IMapper mapper, UserManager<AppUser> userManager)
+        private readonly IJwtService _jwtService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AuthService(IMapper mapper, UserManager<AppUser> userManager, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _jwtService = jwtService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<SignUpResponseDto> SignUp(User user)
         {
             user.Id = Guid.NewGuid();
             AppUser appUser = _mapper.Map<AppUser>(user);
-            IdentityResult result = await _userManager.CreateAsync(appUser,user.Password);
+            IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
 
-            return new SignUpResponseDto {SignUpSuccessfully = result.Succeeded ? true : false,UserId = user.Id};
+            return new SignUpResponseDto { SignUpSuccessfully = result.Succeeded ? true : false, UserId = user.Id };
+        }
+        public async Task<SignInResponse> SignIn(SignInCommand user)
+        {
+            AppUser appUser = await _userManager.FindByEmailAsync(user.email);
+            if (appUser == null)
+            {
+                string fakeHashedPassword = "$2a$11$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+                BCrypt.Net.BCrypt.Verify(user.password, fakeHashedPassword);
+
+                return new SignInResponse("Invalid credentials",false,null,null);
+            }
+
+            bool isPasswordValid = await _userManager.CheckPasswordAsync(appUser,user.password);
+            if (!isPasswordValid) return new SignInResponse("Invalid credentials",false,null,null);
+
+            IList<string> roles = await _userManager.GetRolesAsync(appUser);
+            
+            string accessToken = _jwtService.GenrateToken(appUser.Id,appUser.UserName,roles);
+            string refreshToken = _jwtService.GenerateRefreshToken();
+            var context = _httpContextAccessor.HttpContext;
+            context.Response.Cookies.Append("jwt",accessToken,new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            });
+            context.Response.Cookies.Append("refreshToken",refreshToken,new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            });
+            await _jwtService.AddRefreshTokenToDb(refreshToken,appUser.Id);
+            return new SignInResponse("Sign in successfully", true, accessToken, refreshToken);
         }
     }
 }

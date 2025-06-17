@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using blogest.application.DTOs.responses;
 using blogest.application.Features.commands;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers
@@ -23,6 +26,18 @@ namespace blogest.api.Contollers
         {
             SignUpResponseDto result = await _mediator.Send(signUpCommand);
             return Ok(result);
+        }
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] SignInCommand signInCommand)
+        {
+            SignInResponse result = await _mediator.Send(signInCommand);
+            return Ok(result);
+        }
+        [HttpPost("login-google")]
+        public async Task<IActionResult> LoginWithGoogle()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = "/" };
+            return Challenge(properties,GoogleDefaults.AuthenticationScheme);
         }
     }
 }

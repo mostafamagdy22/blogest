@@ -1,4 +1,6 @@
-﻿namespace blogest.infrastructure.persistence.EntitiesConfig
+﻿using blogest.infrastructure.Identity;
+
+namespace blogest.infrastructure.persistence.EntitiesConfig
 {
 	public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 	{
@@ -6,9 +8,10 @@
 		{
 			builder.HasKey(rt => rt.Id);
 
-			builder.HasOne(rt => rt.User)
+			builder.HasOne<AppUser>()
 				.WithMany(u => u.RefreshTokens)
-				.HasForeignKey(rt => rt.UserId);
+				.HasForeignKey(rt => rt.UserId)
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.Property(rt => rt.Token)
 				.IsRequired();
