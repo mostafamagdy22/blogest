@@ -230,3 +230,12 @@ D:/projects/Blogest/blogest.api/obj/Debug/net9.0/ref/blogest.api.dll
 /home/mostafa/projects/blogest/blogest.api/obj/Debug/net9.0/blogest.api.genruntimeconfig.cache
 /home/mostafa/projects/blogest/blogest.api/obj/Debug/net9.0/ref/blogest.api.dll
 /home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/BCrypt.Net-Next.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Google.Apis.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Google.Apis.Auth.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Google.Apis.Auth.AspNetCore3.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Google.Apis.Core.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.Google.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Newtonsoft.Json.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/System.Management.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/runtimes/win/lib/net7.0/System.Management.dll

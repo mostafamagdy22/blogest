@@ -51,8 +51,8 @@ namespace blogest.domain.Entities
 		{
 			if (string.IsNullOrWhiteSpace(content))
 				throw new ArgumentException("Content cannot be null or empty.", nameof(content));
-			if (content.Length < 50)
-				throw new ArgumentException("Content must be at least 50 characters long.", nameof(content));
+			if (content.Length < 10)
+				throw new ArgumentException("Content must be at least 10 characters long.", nameof(content));
 			if (content.Length > 5000)
 				throw new ArgumentException("Content cannot exceed 5000 characters.", nameof(content));
 

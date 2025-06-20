@@ -8,12 +8,14 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -37,7 +39,7 @@ namespace blogest.api.Contollers
         public async Task<IActionResult> LoginWithGoogle()
         {
             var properties = new AuthenticationProperties { RedirectUri = "/" };
-            return Challenge(properties,GoogleDefaults.AuthenticationScheme);
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
     }
 }

@@ -19,7 +19,8 @@ namespace blogest.infrastructure
         {
             DotNetEnv.Env.Load();
             services.AddScoped<IJwtService, JwtService>();
-            services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<IPostsCommandRepository, PostsCommandRepository>();
+            services.AddScoped<IPostsQueryRepository,PostsQueryRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddDbContext<BlogCommandContext>(options =>

@@ -9,9 +9,9 @@ namespace blogest.application.Features.handlers
 {
     public class CreatePostHandler : IRequestHandler<CreatePostCommand, CreatePostResponseDto>
     {
-        private readonly IPostsRepository _postsRepository;
+        private readonly IPostsCommandRepository _postsRepository;
         private readonly IMapper _mapper;
-        public CreatePostHandler(IPostsRepository postsRepository, IMapper mapper)
+        public CreatePostHandler(IPostsCommandRepository postsRepository, IMapper mapper)
         {
             _postsRepository = postsRepository;
             _mapper = mapper;
