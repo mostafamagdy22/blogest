@@ -22,6 +22,10 @@ Log.Logger = new LoggerConfiguration()
                 .CreateLogger();
 
 builder.Host.UseSerilog();
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfraStructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
@@ -71,7 +75,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

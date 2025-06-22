@@ -186,9 +186,14 @@ namespace blogest.infrastructure.Migrations
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CommentId");
 
                     b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -197,6 +202,9 @@ namespace blogest.infrastructure.Migrations
                 {
                     b.Property<Guid>("PostId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -217,6 +225,8 @@ namespace blogest.infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("PostId");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("UserId");
 
@@ -398,6 +408,12 @@ namespace blogest.infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("blogest.infrastructure.Identity.AppUser", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
                     b.Navigation("Post");
                 });
 
@@ -405,6 +421,10 @@ namespace blogest.infrastructure.Migrations
                 {
                     b.HasOne("blogest.infrastructure.Identity.AppUser", null)
                         .WithMany("Posts")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("blogest.infrastructure.Identity.AppUser", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -452,6 +472,8 @@ namespace blogest.infrastructure.Migrations
 
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Posts");
 
                     b.Navigation("RefreshTokens");

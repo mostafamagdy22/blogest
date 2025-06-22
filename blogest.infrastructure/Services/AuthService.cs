@@ -12,6 +12,8 @@ using blogest.infrastructure.persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Web;
+using blogest.application.Interfaces.repositories;
+using Microsoft.AspNetCore.Authentication;
 namespace blogest.infrastructure.Services
 {
     public class AuthService : IAuthService
@@ -20,8 +22,12 @@ namespace blogest.infrastructure.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IJwtService _jwtService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AuthService(IMapper mapper, UserManager<AppUser> userManager, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
+        private readonly IUsersRepository _useresRepository;
+        private readonly BlogCommandContext _context;
+        public AuthService(BlogCommandContext blogCommandContext, IUsersRepository usersRepository, IMapper mapper, UserManager<AppUser> userManager, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
         {
+            _context = blogCommandContext;
+            _useresRepository = usersRepository;
             _mapper = mapper;
             _userManager = userManager;
             _jwtService = jwtService;
@@ -70,6 +76,30 @@ namespace blogest.infrastructure.Services
             });
             await _jwtService.AddRefreshTokenToDb(refreshToken,appUser.Id);
             return new SignInResponse("Sign in successfully", true, accessToken, refreshToken);
+        }
+
+        public async Task<string> LogOut()
+        {
+            Guid userId = _useresRepository.GetUserIdFromCookies();
+
+            List<RefreshToken> refreshTokens = await _context.RefreshTokens.Where(
+                rt => rt.ExpiresAt > DateTime.UtcNow
+                 && rt.RevokedAt == null
+                 && rt.UserId == userId).ToListAsync();
+
+            refreshTokens.ForEach(rt =>  rt.Revoke());
+            await _context.SaveChangesAsync();
+
+            HttpContext context = _httpContextAccessor.HttpContext;
+
+            context.Response.Cookies.Delete("jwt");
+            context.Response.Cookies.Delete("refreshToken");
+
+
+            await context.SignOutAsync();
+            
+
+            return $"user ${userId} log out Successfully";
         }
     }
 }

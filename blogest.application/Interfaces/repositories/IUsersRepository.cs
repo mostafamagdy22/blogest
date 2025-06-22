@@ -9,5 +9,6 @@ namespace blogest.application.Interfaces.repositories
     {
         public Task<bool> IsEmailExit(string email);
         public Task<bool> IsUserNameExit(string userName);
+        public Guid GetUserIdFromCookies();
     }
 }

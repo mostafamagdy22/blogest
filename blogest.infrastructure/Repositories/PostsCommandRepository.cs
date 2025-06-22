@@ -10,34 +10,26 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using blogest.application.DTOs.responses;
 using blogest.application.Features.commands;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace blogest.infrastructure.Repositories
 {
     public class PostsCommandRepository : IPostsCommandRepository
     {
         private readonly BlogCommandContext _commandContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public PostsCommandRepository(BlogCommandContext commandContext, IHttpContextAccessor httpContextAccessor)
+        private readonly IUsersRepository _usersRepository;
+        public PostsCommandRepository(BlogCommandContext commandContext, IUsersRepository usersRepository)
         {
+            _usersRepository = usersRepository;
             _commandContext = commandContext;
-            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<Guid> AddAsync(Post post)
         {
             Guid postId = Guid.NewGuid();
             post.SetId(postId);
 
-            var token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+            Guid userId = _usersRepository.GetUserIdFromCookies();
 
-            if (token == null)
-                throw new ValidationException("UnAuthoraized");
-
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            var userIdCliam = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
-            var userId = userIdCliam?.Value;
-
-            post.UserId = Guid.Parse(userId);
+            post.UserId = userId;
 
             await _commandContext.Posts.AddAsync(post);
             await _commandContext.SaveChangesAsync();
@@ -51,6 +43,13 @@ namespace blogest.infrastructure.Repositories
             {
                 return new DeletePostResponse(IsSuccess: false,
                 Message: "Post not found");
+            }
+
+            Guid userId = _usersRepository.GetUserIdFromCookies();
+            
+            if (userId != post.UserId)
+            {
+                return new DeletePostResponse(IsSuccess: false, Message: $"Some Problem happend in delete post {postId}");
             }
             _commandContext.Posts.Remove(post);
             await _commandContext.SaveChangesAsync();

@@ -1,4 +1,6 @@
-﻿namespace blogest.infrastructure.persistence.EntitiesConfig
+﻿using blogest.infrastructure.Identity;
+
+namespace blogest.infrastructure.persistence.EntitiesConfig
 {
 	public class CommentConfiguration : IEntityTypeConfiguration<Comment>
 	{
@@ -15,6 +17,11 @@
 				.WithMany(p => p.Comments)
 				.HasForeignKey(c => c.PostId)
 				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasOne<AppUser>()
+				.WithMany(u => u.Comments)
+				.HasForeignKey(c => c.UserId)
+				.OnDelete(DeleteBehavior.ClientCascade);
 		}
 	}
 }

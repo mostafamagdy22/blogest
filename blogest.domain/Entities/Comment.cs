@@ -9,11 +9,15 @@ namespace blogest.domain.Entities
     public class Comment
     {
 		public Guid CommentId { get; private set; }
+		public Guid UserId { get; set; }
 		public string Content { get; private set; }
 		public DateTime PublishedAt { get; private set; }
 		public Guid PostId { get; private set; }
 		public Post Post { get; set; }
-		public Comment(){}
+		public Comment()
+		{
+			PublishedAt = DateTime.UtcNow;
+		}
 		public Comment(Guid id,string content,Guid postId)
 		{
 			PublishedAt = DateTime.UtcNow;

@@ -14,5 +14,6 @@ namespace blogest.domain.Entities
         public string? Image { get; set; }
 		public List<Post>? Posts { get; set; }
 		public List<RefreshToken>? RefreshTokens { get; set; }
-    }
+		public List<Comment>? Comments { get; set; }
+		  }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using blogest.application.DTOs.responses;
 using blogest.application.Features.commands;
+using blogest.application.Interfaces.services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,9 +20,17 @@ namespace blogest.api.Contollers
     public class AuthController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
+        private readonly IAuthService _authService;
+        public AuthController(IMediator mediator, IAuthService authService)
         {
+            _authService = authService;
             _mediator = mediator;
+        }
+        [HttpPost("LogOut")]
+        public async Task<IActionResult> LogOut()
+        {
+            string result = await _authService.LogOut();
+            return Ok(result);
         }
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpCommand signUpCommand)

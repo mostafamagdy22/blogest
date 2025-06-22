@@ -10,6 +10,7 @@ using blogest.infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using blogest.infrastructure.Identity;
+using MediatR;
 
 namespace blogest.infrastructure
 {
@@ -23,6 +24,8 @@ namespace blogest.infrastructure
             services.AddScoped<IPostsQueryRepository,PostsQueryRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsersRepository, UsersRepository>();
+            services.AddScoped<ICommentsCommandRepository, CommentsCommandRepository>();
+            
             services.AddDbContext<BlogCommandContext>(options =>
             {
                 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
