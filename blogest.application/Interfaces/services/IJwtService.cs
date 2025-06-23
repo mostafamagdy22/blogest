@@ -1,6 +1,3 @@
-
-using blogest.application.DTOs.responses;
-
 namespace blogest.application.Interfaces.services;
 
 public interface IJwtService

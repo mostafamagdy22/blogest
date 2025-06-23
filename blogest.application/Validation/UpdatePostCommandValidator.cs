@@ -1,5 +1,3 @@
-using blogest.application.Features.commands;
-using blogest.application.Interfaces.repositories;
 using FluentValidation;
 
 namespace blogest.application.Validation;

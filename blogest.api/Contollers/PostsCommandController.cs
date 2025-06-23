@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using blogest.application.Features.commands;
+using blogest.application.Features.commands.Posts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using blogest.application.DTOs.responses;
+using blogest.application.DTOs.responses.Posts;
 namespace blogest.api.Controllers
 {
     [ApiController]

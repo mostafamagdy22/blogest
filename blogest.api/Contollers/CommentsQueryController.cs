@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
-using blogest.application.DTOs.responses;
-using blogest.application.Features.queries;
+using blogest.application.DTOs.responses.Comments;
+using blogest.application.Features.queries.Comments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

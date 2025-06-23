@@ -1,5 +1,5 @@
-using blogest.application.DTOs.responses;
-using blogest.application.Features.queries;
+using blogest.application.DTOs.responses.Posts;
+using blogest.application.Features.queries.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

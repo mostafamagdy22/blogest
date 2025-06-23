@@ -1,6 +1,6 @@
 using blogest.application.DTOs.requests;
-using blogest.application.DTOs.responses;
-using blogest.application.Features.commands;
+using blogest.application.DTOs.responses.Comments;
+using blogest.application.Features.commands.Comments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
