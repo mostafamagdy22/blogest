@@ -25,6 +25,7 @@ namespace blogest.infrastructure
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ICommentsCommandRepository, CommentsCommandRepository>();
+            services.AddScoped<ICommentsQueryRepository, CommentsQueryRepository>();
             
             services.AddDbContext<BlogCommandContext>(options =>
             {
