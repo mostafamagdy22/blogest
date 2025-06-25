@@ -57,6 +57,21 @@ namespace blogest.infrastructure.Repositories
             return new DeletePostResponse(IsSuccess:true,Message:$"Post with ID {postId} has been deleted.");
         }
 
+        public async Task<DeletePostResponse> DeletePostsByUser(Guid userId)
+        {
+            Guid userIdFromCookies = _usersRepository.GetUserIdFromCookies();
+
+            if (userIdFromCookies != userId)
+            {
+                return new DeletePostResponse(IsSuccess: false, Message: "You are not authorized to delete posts of this user.");
+            }
+
+            _commandContext.Posts.RemoveRange(_commandContext.Posts.Where(p => p.UserId == userId));
+            await _commandContext.SaveChangesAsync();
+            
+            return new DeletePostResponse(IsSuccess: true, Message: $"All posts by user {userId} have been deleted.");
+        }
+
         public async Task<UpdatePostResponse> UpdatePost(UpdatePostCommand updatePostCommand)
         {
             Post post = await _commandContext.Posts.FindAsync(updatePostCommand.postId);

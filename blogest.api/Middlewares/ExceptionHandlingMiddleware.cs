@@ -38,10 +38,20 @@ public class ExceptionHandlingMiddleware
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     await context.Response.WriteAsJsonAsync(new
                     {
-                        error = "Internal Server Error"
+                        error = "Internal Server Errorrwqrqwr"
                     });
                     break;
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception");
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(new
+            {
+                error = $"Internal Server Error, problem is {ex.Message}"
+            });
         }
     }
 }

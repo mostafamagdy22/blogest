@@ -85,7 +85,7 @@ public class JwtService : IJwtService
 
             await _context.SaveChangesAsync();
 
-            AppUser user = await _context.DomainUsers.FirstOrDefaultAsync(u => u.Id == refreshToken.UserId);
+            AppUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == refreshToken.UserId);
             if (user == null)
             {
                 return new RefreshTokenResponse(null, null, false);

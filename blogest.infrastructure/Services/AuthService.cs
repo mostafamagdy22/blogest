@@ -1,18 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
-using blogest.application.DTOs.responses;
-using blogest.application.Features.commands;
 using blogest.application.Interfaces.services;
 using blogest.infrastructure.Identity;
 using blogest.infrastructure.persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.Web;
-using blogest.application.Interfaces.repositories;
 using Microsoft.AspNetCore.Authentication;
 namespace blogest.infrastructure.Services
 {
@@ -39,7 +30,26 @@ namespace blogest.infrastructure.Services
             AppUser appUser = _mapper.Map<AppUser>(user);
             IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
 
-            return new SignUpResponseDto { SignUpSuccessfully = result.Succeeded ? true : false, UserId = user.Id };
+            string accessToken = _jwtService.GenrateToken(appUser.Id, appUser.UserName, new List<string> { "User" });
+            string refreshToken = _jwtService.GenerateRefreshToken();
+
+            HttpContext context = _httpContextAccessor.HttpContext;
+            context.Response.Cookies.Append("jwt", accessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(1)
+            });
+
+            return new SignUpResponseDto
+            {
+                SignUpSuccessfully = result.Succeeded ? true : false,
+                UserId = result.Succeeded ? appUser.Id : Guid.Empty,
+                Message = result.Succeeded
+        ? "Sign up completed successfully"
+        : string.Join(", ", result.Errors.Select(e => e.Description))
+            };
         }
         public async Task<SignInResponse> SignIn(SignInCommand user)
         {

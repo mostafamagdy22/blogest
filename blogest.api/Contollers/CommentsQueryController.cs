@@ -1,6 +1,9 @@
+using System.Net;
 using blogest.application.DTOs.responses.Comments;
 using blogest.application.Features.queries.Comments;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers;
@@ -22,4 +25,21 @@ public class CommentsQueryController : ControllerBase
 
         return Ok(response);
     }
+    [HttpGet("GetAll/{PostId}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAllCommentsByPostId([FromRoute] Guid PostId,int pageNumber = 1,int pageSize = 10)
+    {
+        GetCommentsByPostIdQuery query = new GetCommentsByPostIdQuery(PostId,pageNumber,pageSize);
+        GetCommentsOnPostResponse response = await _mediator.Send(query);
+        return Ok(response);
+    }
+    [HttpGet("GetAllCommentsOfUser/{UserId}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAllCommentsOfUser([FromRoute] Guid UserId)
+    {
+        GetCommentsOfUserQuery query = new GetCommentsOfUserQuery(UserId);
+        GetCommentsOfUserResponse response = await _mediator.Send(query);
+        return Ok(response);
+    }
+
 }

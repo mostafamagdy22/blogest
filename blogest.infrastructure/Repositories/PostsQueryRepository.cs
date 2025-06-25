@@ -1,6 +1,4 @@
 using AutoMapper;
-using blogest.application.DTOs.responses;
-using blogest.application.Interfaces.repositories;
 using blogest.infrastructure.persistence;
 
 namespace blogest.infrastructure.Repositories;
@@ -9,8 +7,10 @@ public class PostsQueryRepository : IPostsQueryRepository
 {
     private readonly BlogCommandContext _context;
     private readonly IMapper _mapper;
-    public PostsQueryRepository(BlogCommandContext context, IMapper mapper)
+    private readonly ICommentsQueryRepository _commentsQueryRepository;
+    public PostsQueryRepository(ICommentsQueryRepository commentsQueryRepository, BlogCommandContext context, IMapper mapper)
     {
+        _commentsQueryRepository = commentsQueryRepository;
         _mapper = mapper;
         _context = context;
     }
@@ -34,7 +34,7 @@ public class PostsQueryRepository : IPostsQueryRepository
 
         var comments = new List<CommentDto>();
 
-        foreach(var comment in post.Comments)
+        foreach (var comment in post.Comments)
         {
             var author = await _context.Users.Where(u => u.Id == comment.UserId).Select(u => u.UserName).FirstOrDefaultAsync();
             comments.Add(new CommentDto(comment.CommentId, comment.Content, comment.PublishedAt, author));
@@ -42,5 +42,41 @@ public class PostsQueryRepository : IPostsQueryRepository
 
 
         return response with { Publisher = publisher, Comments = comments };
+    }
+
+    public async Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId,
+        string? include, int pageNumber = 1, int pageSize = 10)
+    {
+        List<Post> posts = await _context.Posts
+            .Include(p => p.Comments)
+            .Include(p => p.PostCategories)
+            .Where(p => p.PostCategories.Any(pc => pc.CategoryId == categoryId))
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        if (posts.Count == 0)
+            return new GetPostsByCategoryResponse("no posts found", false, null);
+
+        List<GetPostResponse> getPosts = _mapper.Map<List<GetPostResponse>>(posts);
+
+        for (int i = 0; i < posts.Count; i++)
+        {
+            var post = posts[i];
+            string publisher = await _context.Users
+                .Where(u => u.Id == post.UserId)
+                .Select(u => u.UserName)
+                .FirstOrDefaultAsync() ?? string.Empty;
+            if (include.Contains("comments"))
+            {
+                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId,pageNumber,pageSize);
+                List<CommentDto> dtos = comments.Comments;
+                var mapped = getPosts[i];
+                getPosts[i] = mapped with { Publisher = publisher, Comments = dtos };
+
+            }
+        }
+
+        return new GetPostsByCategoryResponse("returned successfully", true, getPosts);
     }
 }

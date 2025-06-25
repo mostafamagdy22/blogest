@@ -4,4 +4,5 @@ public class SignUpResponseDto
 {
     public bool SignUpSuccessfully { get; set; }
     public Guid? UserId { get; set; }
+    public string? Message { get; set; }
 }

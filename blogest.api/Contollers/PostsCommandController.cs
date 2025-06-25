@@ -30,11 +30,19 @@ namespace blogest.api.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        [HttpDelete("DeleteByUser/{userId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> DeletePostsByUser([FromRoute] Guid userId)
+        {
+            DeletePostsByUserCommand command = new DeletePostsByUserCommand(userId);
+            DeletePostResponse response = await _mediator.Send(command);
+            return Ok(response);
+        }
         [HttpPost("Update/{postId}")]
-        public async Task<IActionResult> UpdatePost([FromRoute] Guid postId,[FromBody] UpdatePostCommand command)
+        public async Task<IActionResult> UpdatePost([FromRoute] Guid postId, [FromBody] UpdatePostCommand command)
         {
             if (command.postId == Guid.Empty || command.postId != postId)
-                command = new UpdatePostCommand(command.Title,command.Content,postId);
+                command = new UpdatePostCommand(command.Title, command.Content, postId);
 
             UpdatePostResponse result = await _mediator.Send(command);
             return Ok(result);
