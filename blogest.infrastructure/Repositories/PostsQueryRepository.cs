@@ -69,7 +69,7 @@ public class PostsQueryRepository : IPostsQueryRepository
                 .FirstOrDefaultAsync() ?? string.Empty;
             if (include.Contains("comments"))
             {
-                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId,pageNumber,pageSize);
+                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId, pageNumber, pageSize);
                 List<CommentDto> dtos = comments.Comments;
                 var mapped = getPosts[i];
                 getPosts[i] = mapped with { Publisher = publisher, Comments = dtos };
@@ -78,5 +78,42 @@ public class PostsQueryRepository : IPostsQueryRepository
         }
 
         return new GetPostsByCategoryResponse("returned successfully", true, getPosts);
+    }
+
+    public async Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query)
+    {
+        IQueryable<Post> postsQuery = _context.Posts.Where(p => p.UserId == query.userId)
+                        .Skip((query.pageNumber - 1) * query.pageSize)
+                        .Take(query.pageSize);
+
+        List<Post> posts = await postsQuery.ToListAsync();
+
+        if (posts.Count == 0) return new GetPostsByCategoryResponse(Message: "No posts found to this user",IsSuccess:false,Posts: null);
+
+        List<Guid> userIds = await postsQuery.Select(p => p.UserId).Distinct().ToListAsync();
+        Dictionary<Guid, string?> userDict = await _context.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id, u => u.UserName);
+
+        var postResponseTasks = posts.Select(async post =>
+        {
+            GetPostResponse dto = _mapper.Map<GetPostResponse>(post);
+            dto = dto with { Publisher = userDict.GetValueOrDefault(post.UserId) ?? "UnKnown" };
+            if (query.include == "comments")
+            {
+                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId);
+                dto = dto with { Comments = comments.Comments };
+            }
+
+            return dto;
+        });
+
+        var postResponses = await Task.WhenAll(postResponseTasks);
+
+        return new GetPostsByCategoryResponse(
+            Message: $"Posts of user {query.userId} returned successfully",
+            IsSuccess: true,
+            Posts: postResponses.ToList()
+        );
     }
 }

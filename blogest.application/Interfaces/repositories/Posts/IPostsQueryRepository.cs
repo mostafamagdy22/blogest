@@ -4,5 +4,6 @@ public interface IPostsQueryRepository
 {
     public Task<bool> ExistsAsync(Guid postId);
     public Task<GetPostResponse> GetPostByIdAsync(Guid postId);
-    public Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId,string? include,int pageNumber = 1,int pageSize = 10);
+    public Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId, string? include, int pageNumber = 1, int pageSize = 10);
+    public Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query);
 }

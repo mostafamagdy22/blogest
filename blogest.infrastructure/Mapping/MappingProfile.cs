@@ -21,7 +21,6 @@ namespace blogest.infrastructure.Mapping
             .ReverseMap();
 
             CreateMap<Post, GetPostResponse>()
-                .ConstructUsing(src => new GetPostResponse(new List<CommentDto>(), src.Content, src.Title, src.PublishedAt, string.Empty))
                 .ForMember(dest => dest.Comments, opt => opt.Ignore())
                 .ForMember(dest => dest.Publisher, opt => opt.Ignore())
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
