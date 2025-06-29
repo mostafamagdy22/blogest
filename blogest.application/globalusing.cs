@@ -16,3 +16,4 @@ global using blogest.application.Interfaces.repositories.Users;
 global using blogest.application.Interfaces.repositories.Comments;
 global using blogest.application.Interfaces.repositories.Posts;
 global using blogest.domain.Entities;
+global using FluentValidation;

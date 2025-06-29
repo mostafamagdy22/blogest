@@ -2,6 +2,8 @@ using blogest.application.DTOs.requests;
 using blogest.application.DTOs.responses.Comments;
 using blogest.application.Features.commands.Comments;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers;
@@ -16,6 +18,7 @@ public class CommentsCommandController : ControllerBase
         _mediator = mediator;
     }
     [HttpPost("Create")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentCommand createCommentCommand)
     {
         CreateCommentResponse response = await _mediator.Send(createCommentCommand);

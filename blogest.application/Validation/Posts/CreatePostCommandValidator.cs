@@ -1,6 +1,4 @@
-using FluentValidation;
-
-namespace blogest.application.Validation;
+namespace blogest.application.Validation.Posts;
 
 public class CreatePostCommandValidator : AbstractValidator<CreatePostCommand>
 {
