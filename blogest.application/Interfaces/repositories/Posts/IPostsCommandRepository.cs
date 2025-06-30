@@ -7,8 +7,8 @@ public interface IPostsCommandRepository
     /// </summary>
     /// <param name="post">The post entity to add.</param>
     /// <returns>The ID of the created post.</returns>
-    public Task<Guid> AddAsync(Post post);
-
+    public Task<Guid> AddAsync(Post post,List<int> categoryIds);
+    public Task<UpdatePostCategoriesResponse> updatePostCategories(UpdatePostCategoriesCommand command);
     /// <summary>
     /// Deletes a post by its ID.
     /// </summary>

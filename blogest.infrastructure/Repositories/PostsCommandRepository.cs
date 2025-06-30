@@ -22,7 +22,7 @@ namespace blogest.infrastructure.Repositories
             _usersRepository = usersRepository;
             _commandContext = commandContext;
         }
-        public async Task<Guid> AddAsync(Post post)
+        public async Task<Guid> AddAsync(Post post,List<int> categoryIds)
         {
             Guid postId = Guid.NewGuid();
             post.SetId(postId);
@@ -31,7 +31,14 @@ namespace blogest.infrastructure.Repositories
 
             post.UserId = userId;
 
+            List<PostCategory> postCategories = new List<PostCategory>();
+            foreach (int categoryId in categoryIds)
+            {
+                postCategories.Add(new PostCategory(){CategoryId = categoryId,PostId = postId});
+            }
+
             await _commandContext.Posts.AddAsync(post);
+            await _commandContext.PostCategories.AddRangeAsync(postCategories);
             await _commandContext.SaveChangesAsync();
             return postId;
         }
@@ -82,6 +89,31 @@ namespace blogest.infrastructure.Repositories
             post.SetContent(updatePostCommand.Content);
             await _commandContext.SaveChangesAsync();
             return new UpdatePostResponse(post.Title,post.Content,DateTime.UtcNow,$"post {updatePostCommand.postId} updated successfully!");
+        }
+
+        public async Task<UpdatePostCategoriesResponse> updatePostCategories(UpdatePostCategoriesCommand command)
+        {
+            Post post = await _commandContext.Posts
+            .Include(p => p.PostCategories)
+            .ThenInclude(pc => pc.Category)
+            .FirstOrDefaultAsync(p => p.PostId == command.postId);
+            
+            if (post == null)
+                return new UpdatePostCategoriesResponse(IsSuccess: false, Message: "post not found");
+            List<Category> categories = await _commandContext.Categories.
+                                        Where(c => command.categoryIds.Contains(c.Id)).ToListAsync();
+
+            if (categories.Count != command.categoryIds.Count)
+                return new UpdatePostCategoriesResponse(IsSuccess:false,Message:"Some categories do not exist");
+
+            post.PostCategories.Clear();
+            foreach (Category category in categories)
+            {
+                post.PostCategories.Add(new PostCategory() {PostId = post.PostId,CategoryId = category.Id});
+            }
+
+            await _commandContext.SaveChangesAsync();
+            return new UpdatePostCategoriesResponse(IsSuccess: true,Message:"categries updated successfully");
         }
     }
 }

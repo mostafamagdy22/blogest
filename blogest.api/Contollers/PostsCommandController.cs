@@ -47,5 +47,12 @@ namespace blogest.api.Controllers
             UpdatePostResponse result = await _mediator.Send(command);
             return Ok(result);
         }
+        [HttpPut("{id}/categories")]
+        public async Task<IActionResult> UpdatePostCategories([FromRoute] Guid id,[FromBody] List<int> categoriesIds)
+        {
+            UpdatePostCategoriesCommand command = new UpdatePostCategoriesCommand(id,categoriesIds);
+            UpdatePostCategoriesResponse response = await _mediator.Send(command);
+            return Ok(response);
+        }
     }
 }

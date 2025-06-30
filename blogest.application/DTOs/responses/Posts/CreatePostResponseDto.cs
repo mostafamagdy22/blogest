@@ -1,3 +1,3 @@
 namespace blogest.application.DTOs.responses.Posts;
 
-public record CreatePostResponseDto(Guid? postId, bool isCreatedSuccessfully);
+public record CreatePostResponseDto(string Message,Guid? postId, bool isCreatedSuccessfully);

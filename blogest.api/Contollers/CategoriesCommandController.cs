@@ -1,0 +1,27 @@
+using blogest.application.DTOs.responses.Categories;
+using blogest.application.Features.commands.Categories;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace blogest.api.Contollers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CategoriesCommandController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+        public CategoriesCommandController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+        [HttpPost("Create")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryCommand command)
+        {
+            CreateCategoryResponse response = await _mediator.Send(command); 
+            return Ok(response);
+        }
+    }
+}

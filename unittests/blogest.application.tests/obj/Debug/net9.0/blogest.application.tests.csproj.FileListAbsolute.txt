@@ -1,0 +1,8 @@
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/bin/Debug/net9.0/.msCoverageSourceRootsMapping_blogest.application.tests
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/bin/Debug/net9.0/CoverletSourceRootsMapping_blogest.application.tests
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.csproj.AssemblyReference.cache
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.GeneratedMSBuildEditorConfig.editorconfig
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.AssemblyInfoInputs.cache
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.AssemblyInfo.cs
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.csproj.CoreCompileInputs.cache
+/home/mostafa/projects/blogest/unittests/blogest.application.tests/obj/Debug/net9.0/blogest.application.tests.sourcelink.json

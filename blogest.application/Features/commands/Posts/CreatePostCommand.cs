@@ -7,4 +7,5 @@ public class CreatePostCommand : IRequest<CreatePostResponseDto>
     public string Title { get; init; }
     public string Content { get; init; }
     public DateTime PublishDate { get; init; }
+    public List<int> CategoryIds { get; set; } = new List<int>();
 }
