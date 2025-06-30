@@ -1,15 +1,17 @@
+using DotNetEnv;
+
+
 using blogest.infrastructure;
 using blogest.application.Interfaces.services;
 using Serilog;
 using blogest.api.Middlewares;
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 
-Env.Load();
+Env.Load("../blogest.infrastructure/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,12 +62,14 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"))),
     };
+})
+.AddGoogle(options =>
+{
+    options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+    options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+    // options.SignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.CallbackPath = "/login-google";
 });
-// .AddGoogle(options =>
-// {
-//     options.ClientId = "";
-//     options.ClientSecret = "";
-// });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

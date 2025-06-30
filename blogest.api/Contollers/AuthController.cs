@@ -45,10 +45,17 @@ namespace blogest.api.Contollers
                 return Unauthorized(result);
             return Ok(result);
         }
-        [HttpPost("login-google")]
+        [HttpGet("login-google")]
         public async Task<IActionResult> LoginWithGoogle()
         {
-            var properties = new AuthenticationProperties { RedirectUri = "/" };
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = "/swagger/index.html",
+                Items =
+                {
+                    {"prompt","select_account"}
+                }
+            };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
     }
