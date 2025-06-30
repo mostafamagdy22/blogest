@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("blogest.api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ad7f26d2a64aa69f8f6ea6738aa2f61e3b88acfc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79c03aea64e309db006d895e4b745fa88b990d1c")]
 [assembly: System.Reflection.AssemblyProductAttribute("blogest.api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("blogest.api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
