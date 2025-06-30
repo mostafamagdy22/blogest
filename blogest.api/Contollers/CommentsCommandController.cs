@@ -22,20 +22,28 @@ public class CommentsCommandController : ControllerBase
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentCommand createCommentCommand)
     {
         CreateCommentResponse response = await _mediator.Send(createCommentCommand);
+        if (response is { IsSuccess: false })
+            return BadRequest(response);
         return Ok(response);
     }
+
     [HttpDelete("delete/{commentId}")]
     public async Task<IActionResult> DeleteComment([FromRoute] Guid commentId)
     {
         DeleteCommentCommand command = new DeleteCommentCommand(commentId);
         DeleteCommentResponse response = await _mediator.Send(command);
+        if (response is { IsSuccess: false })
+            return BadRequest(response);
         return Ok(response);
     }
+
     [HttpPut("update/{commentId}")]
     public async Task<IActionResult> UpdateComment([FromRoute] Guid commentId, [FromBody] UpdateCommentRequestDto content)
     {
-        UpdateCommentCommand command = new UpdateCommentCommand(commentId,content.Content);
+        UpdateCommentCommand command = new UpdateCommentCommand(commentId, content.Content);
         UpdateCommentResponse response = await _mediator.Send(command);
+        if (response is { IsSuccess: false })
+            return BadRequest(response);
         return Ok(response);
     }
 }

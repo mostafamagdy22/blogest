@@ -20,6 +20,8 @@ namespace blogest.api.Controllers
         public async Task<IActionResult> CreatePost([FromBody] CreatePostCommand command)
         {
             var result = await _mediator.Send(command);
+            if (result is { isCreatedSuccessfully: false })
+                return BadRequest(result);
             return Ok(result);
         }
         [HttpDelete("Delete/{postId}")]
@@ -28,6 +30,8 @@ namespace blogest.api.Controllers
         {
             var command = new DeletePostCommand(postId);
             var result = await _mediator.Send(command);
+            if (result is { IsSuccess: false })
+                return BadRequest(result);
             return Ok(result);
         }
         [HttpDelete("DeleteByUser/{userId}")]
@@ -36,6 +40,8 @@ namespace blogest.api.Controllers
         {
             DeletePostsByUserCommand command = new DeletePostsByUserCommand(userId);
             DeletePostResponse response = await _mediator.Send(command);
+            if (response is { IsSuccess: false })
+                return BadRequest(response);
             return Ok(response);
         }
         [HttpPost("Update/{postId}")]
@@ -45,13 +51,18 @@ namespace blogest.api.Controllers
                 command = new UpdatePostCommand(command.Title, command.Content, postId);
 
             UpdatePostResponse result = await _mediator.Send(command);
+            if (result is { success: false })
+                return BadRequest(result);
             return Ok(result);
         }
         [HttpPut("{id}/categories")]
-        public async Task<IActionResult> UpdatePostCategories([FromRoute] Guid id,[FromBody] List<int> categoriesIds)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> UpdatePostCategories([FromRoute] Guid id, [FromBody] List<int> categoriesIds)
         {
-            UpdatePostCategoriesCommand command = new UpdatePostCategoriesCommand(id,categoriesIds);
+            UpdatePostCategoriesCommand command = new UpdatePostCategoriesCommand(id, categoriesIds);
             UpdatePostCategoriesResponse response = await _mediator.Send(command);
+            if (response is { IsSuccess: false })
+                return BadRequest(response);
             return Ok(response);
         }
     }

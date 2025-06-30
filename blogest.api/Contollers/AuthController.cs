@@ -25,18 +25,24 @@ namespace blogest.api.Contollers
         public async Task<IActionResult> LogOut()
         {
             string result = await _authService.LogOut();
+            if (string.IsNullOrEmpty(result) || result.ToLower().Contains("error"))
+                return BadRequest("Logout failed");
             return Ok(result);
         }
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpCommand signUpCommand)
         {
             SignUpResponseDto result = await _mediator.Send(signUpCommand);
+            if (!result.SignUpSuccessfully)
+                return BadRequest(result);
             return Ok(result);
         }
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] SignInCommand signInCommand)
         {
             SignInResponse result = await _mediator.Send(signInCommand);
+            if (!result.isAuth)
+                return Unauthorized(result);
             return Ok(result);
         }
         [HttpPost("login-google")]

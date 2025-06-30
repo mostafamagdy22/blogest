@@ -18,6 +18,8 @@ namespace blogest.api.Contollers
         public async Task<IActionResult> Refresh(TokenRequestCommand request)
         {
             RefreshTokenResponse result = await _mediator.Send(request);
+            if (result is { success: false })
+                return BadRequest(result);
             return Ok(result);
         }
     }

@@ -83,12 +83,12 @@ namespace blogest.infrastructure.Repositories
         {
             Post post = await _commandContext.Posts.FindAsync(updatePostCommand.postId);
             if (post == null)
-                return new UpdatePostResponse(null, null, null, "Post Not Found!");
+                return new UpdatePostResponse(false,null, null, null, "Post Not Found!");
 
             post.SetTitle(updatePostCommand.Title);
             post.SetContent(updatePostCommand.Content);
             await _commandContext.SaveChangesAsync();
-            return new UpdatePostResponse(post.Title,post.Content,DateTime.UtcNow,$"post {updatePostCommand.postId} updated successfully!");
+            return new UpdatePostResponse(true,post.Title,post.Content,DateTime.UtcNow,$"post {updatePostCommand.postId} updated successfully!");
         }
 
         public async Task<UpdatePostCategoriesResponse> updatePostCategories(UpdatePostCategoriesCommand command)
@@ -97,8 +97,10 @@ namespace blogest.infrastructure.Repositories
             .Include(p => p.PostCategories)
             .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.PostId == command.postId);
-            
-            if (post == null)
+
+            Guid userIDFromCookies = _usersRepository.GetUserIdFromCookies();
+
+            if (post == null || userIDFromCookies != post.UserId)
                 return new UpdatePostCategoriesResponse(IsSuccess: false, Message: "post not found");
             List<Category> categories = await _commandContext.Categories.
                                         Where(c => command.categoryIds.Contains(c.Id)).ToListAsync();

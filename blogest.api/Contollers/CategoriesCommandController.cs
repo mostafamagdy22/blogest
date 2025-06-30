@@ -21,6 +21,8 @@ namespace blogest.api.Contollers
         public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryCommand command)
         {
             CreateCategoryResponse response = await _mediator.Send(command); 
+            if (response is { IsSuccess: false })
+                return BadRequest(response);
             return Ok(response);
         }
     }
