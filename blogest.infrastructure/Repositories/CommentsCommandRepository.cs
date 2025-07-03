@@ -15,7 +15,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
     }
     public async Task<CreateCommentResponse> CreateComment(Comment comment)
     {
-        Guid userIdFromCookies = _usersRepository.GetUserIdFromCookies();
+        Guid? userIdFromCookies = _usersRepository.GetUserIdFromCookies();
 
         if (comment.UserId != userIdFromCookies)
             throw new Exception("Some problem happend please try again later");
@@ -29,7 +29,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
 
     public async Task<DeleteCommentResponse> DeleteComment(Guid commentId)
     {
-        Guid userId = _usersRepository.GetUserIdFromCookies();
+        Guid? userId = _usersRepository.GetUserIdFromCookies();
         Comment comment = await _context.Comments.FindAsync(commentId);
 
         if (comment.UserId != userId || comment == null)
@@ -45,7 +45,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
 
     public async Task<UpdateCommentResponse> UpdateComment(Guid commentId, string newContent)
     {
-        Guid userId = _usersRepository.GetUserIdFromCookies();
+        Guid? userId = _usersRepository.GetUserIdFromCookies();
         Comment comment = await _context.Comments.FindAsync(commentId);
         if (comment == null || userId != comment.UserId)
         {

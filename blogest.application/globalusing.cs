@@ -17,3 +17,4 @@ global using blogest.application.Interfaces.repositories.Comments;
 global using blogest.application.Interfaces.repositories.Posts;
 global using blogest.domain.Entities;
 global using FluentValidation;
+global using blogest.application.DTOs.responses.Likes;

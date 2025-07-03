@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using blogest.application.DTOs.responses.Auth;
 using blogest.application.Features.commands.Auth;
+using blogest.application.Interfaces.repositories.Users;
 using blogest.application.Interfaces.services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
@@ -16,8 +18,10 @@ namespace blogest.api.Contollers
     {
         private readonly IMediator _mediator;
         private readonly IAuthService _authService;
-        public AuthController(IMediator mediator, IAuthService authService)
+        private readonly IUsersRepository _usersRepository;
+        public AuthController(IUsersRepository usersRepository, IMediator mediator, IAuthService authService)
         {
+            _usersRepository = usersRepository;
             _authService = authService;
             _mediator = mediator;
         }
@@ -50,13 +54,36 @@ namespace blogest.api.Contollers
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = "/swagger/index.html",
+                RedirectUri = Url.Action("GoogleCallback", "Auth"),
                 Items =
                 {
                     {"prompt","select_account"}
                 }
             };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+        [HttpGet("google-callback")]
+        public async Task<IActionResult> GoogleCallback()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+                return Unauthorized();
+
+            var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value;
+            var name = result.Principal.FindFirst(ClaimTypes.Name)?.Value;
+            var googleId = result.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email not providedd by google");
+            }
+
+            var user = await _usersRepository.GetUserByEmailAsync(email);
+            if (user == null)
+                user = await _authService.CreateUserFromGoogleAsync(email,name,googleId);
+
+            var jwt = await _authService.SignIn(new SignInCommand(email,null));
+
+            return Ok();
         }
     }
 }

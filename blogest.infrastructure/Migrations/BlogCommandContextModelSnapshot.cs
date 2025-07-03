@@ -198,6 +198,21 @@ namespace blogest.infrastructure.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("blogest.domain.Entities.Like", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("blogest.domain.Entities.Post", b =>
                 {
                     b.Property<Guid>("PostId")
@@ -417,6 +432,23 @@ namespace blogest.infrastructure.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("blogest.domain.Entities.Like", b =>
+                {
+                    b.HasOne("blogest.domain.Entities.Post", "Post")
+                        .WithMany("Likes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("blogest.infrastructure.Identity.AppUser", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("blogest.domain.Entities.Post", b =>
                 {
                     b.HasOne("blogest.infrastructure.Identity.AppUser", null)
@@ -467,12 +499,16 @@ namespace blogest.infrastructure.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Likes");
+
                     b.Navigation("PostCategories");
                 });
 
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
 
                     b.Navigation("Posts");
 

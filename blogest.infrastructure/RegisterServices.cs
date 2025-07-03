@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using blogest.infrastructure.Identity;
 using MediatR;
 using blogest.application.Interfaces.repositories.Categories;
+using blogest.application.Interfaces.repositories.Likes;
 
 namespace blogest.infrastructure
 {
@@ -28,6 +29,7 @@ namespace blogest.infrastructure
             services.AddScoped<ICommentsCommandRepository, CommentsCommandRepository>();
             services.AddScoped<ICommentsQueryRepository, CommentsQueryRepository>();
             services.AddScoped<ICategoriesRepository, CategoriesCommandRepository>();
+            services.AddScoped<ILikesCommandRepository, LikesCommandRepository>();
 
             services.AddDbContext<BlogCommandContext>(options =>
             {
@@ -52,6 +54,9 @@ namespace blogest.infrastructure
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredUniqueChars = 0;
+
+                options.User.AllowedUserNameCharacters = null;
+                options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<BlogCommandContext>()
             .AddDefaultTokenProviders();

@@ -1,4 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using AutoMapper;
 using blogest.application.Interfaces.repositories;
 using blogest.infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
@@ -9,23 +11,34 @@ namespace blogest.infrastructure.Repositories;
 public class UsersRepository : IUsersRepository
 {
     private readonly UserManager<AppUser> _userManger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-    public UsersRepository(UserManager<AppUser> userManager,IHttpContextAccessor httpContextAccessor)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMapper _mapper;
+    public UsersRepository(IMapper mapper, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor)
     {
+        _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _userManger = userManager;
     }
 
-    public Guid GetUserIdFromCookies()
+    public async Task<User> GetUserByEmailAsync(string email)
     {
-        var token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+        AppUser user = await _userManger.FindByEmailAsync(email);
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
+        if (user == null)
+            return null;
 
-        var userIdCliam = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
-        var userId = userIdCliam?.Value;
-        return Guid.Parse(userId);
+        User userDto = _mapper.Map<User>(user);
+        return userDto;
+    }
+
+    public Guid? GetUserIdFromCookies()
+    {
+        var claim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (claim == null || !Guid.TryParse(claim.Value, out Guid userId))
+            return null;
+
+        return userId;
     }
 
     public async Task<bool> IsEmailExit(string email)

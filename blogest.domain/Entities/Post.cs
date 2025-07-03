@@ -16,9 +16,10 @@ namespace blogest.domain.Entities
 		public bool IsPublish { get; set; }
 		public List<Comment>? Comments { get; set; }
 		public List<PostCategory> PostCategories { get; set; }
+		public List<Like>? Likes { get; set; }
 		public Post()
 		{
-			
+
 		}
 		public Post(Guid id, string title, string content, DateTime? publishedAt)
 		{

@@ -30,6 +30,7 @@ public class JwtService : IJwtService
         List<Claim> claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub,userId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier,userId.ToString()),
             new Claim(JwtRegisteredClaimNames.UniqueName,userName),
             new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
         };

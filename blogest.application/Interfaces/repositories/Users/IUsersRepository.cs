@@ -20,5 +20,6 @@ public interface IUsersRepository
     /// Gets the user ID from cookies.
     /// </summary>
     /// <returns>The user ID extracted from cookies.</returns>
-    public Guid GetUserIdFromCookies();
+    public Guid? GetUserIdFromCookies();
+    public Task<User> GetUserByEmailAsync(string email);
 }

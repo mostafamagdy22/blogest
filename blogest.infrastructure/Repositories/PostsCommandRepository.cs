@@ -27,9 +27,10 @@ namespace blogest.infrastructure.Repositories
             Guid postId = Guid.NewGuid();
             post.SetId(postId);
 
-            Guid userId = _usersRepository.GetUserIdFromCookies();
+            Guid? userId = _usersRepository.GetUserIdFromCookies();
 
-            post.UserId = userId;
+            if (userId != null)
+                post.UserId = (Guid)userId;
 
             List<PostCategory> postCategories = new List<PostCategory>();
             foreach (int categoryId in categoryIds)
@@ -52,7 +53,7 @@ namespace blogest.infrastructure.Repositories
                 Message: "Post not found");
             }
 
-            Guid userId = _usersRepository.GetUserIdFromCookies();
+            Guid? userId = _usersRepository.GetUserIdFromCookies();
             
             if (userId != post.UserId)
             {
@@ -66,7 +67,7 @@ namespace blogest.infrastructure.Repositories
 
         public async Task<DeletePostResponse> DeletePostsByUser(Guid userId)
         {
-            Guid userIdFromCookies = _usersRepository.GetUserIdFromCookies();
+            Guid? userIdFromCookies = _usersRepository.GetUserIdFromCookies();
 
             if (userIdFromCookies != userId)
             {
@@ -98,7 +99,7 @@ namespace blogest.infrastructure.Repositories
             .ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.PostId == command.postId);
 
-            Guid userIDFromCookies = _usersRepository.GetUserIdFromCookies();
+            Guid? userIDFromCookies = _usersRepository.GetUserIdFromCookies();
 
             if (post == null || userIDFromCookies != post.UserId)
                 return new UpdatePostCategoriesResponse(IsSuccess: false, Message: "post not found");
