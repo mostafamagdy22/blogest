@@ -32,4 +32,5 @@ public interface IPostsQueryRepository
     /// <param name="query">Query object containing userId, include, pageNumber, and pageSize.</param>
     /// <returns>Paginated posts response for the user.</returns>
     public Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query);
+    public Task<GetUserLikesResponse> GetUserLikes(GetUserLikesQuery query);
 }

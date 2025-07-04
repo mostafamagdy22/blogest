@@ -1,4 +1,7 @@
 using AutoMapper;
+using blogest.application.DTOs.responses.Likes;
+using blogest.application.DTOs.responses.Users;
+using blogest.infrastructure.Identity;
 using blogest.infrastructure.persistence;
 
 namespace blogest.infrastructure.Repositories;
@@ -80,6 +83,7 @@ public class PostsQueryRepository : IPostsQueryRepository
         return new GetPostsByCategoryResponse("returned successfully", true, getPosts);
     }
 
+
     public async Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query)
     {
         IQueryable<Post> postsQuery = _context.Posts.Where(p => p.UserId == query.userId)
@@ -88,7 +92,7 @@ public class PostsQueryRepository : IPostsQueryRepository
 
         List<Post> posts = await postsQuery.ToListAsync();
 
-        if (posts.Count == 0) return new GetPostsByCategoryResponse(Message: "No posts found to this user",IsSuccess:false,Posts: null);
+        if (posts.Count == 0) return new GetPostsByCategoryResponse(Message: "No posts found to this user", IsSuccess: false, Posts: null);
 
         List<Guid> userIds = await postsQuery.Select(p => p.UserId).Distinct().ToListAsync();
         Dictionary<Guid, string?> userDict = await _context.Users
@@ -115,5 +119,95 @@ public class PostsQueryRepository : IPostsQueryRepository
             IsSuccess: true,
             Posts: postResponses.ToList()
         );
+    }
+
+    public async Task<GetUserLikesResponse> GetUserLikes(GetUserLikesQuery query)
+    {
+        var userId = query.UserId;
+        List<GetPostResponse> postsLiked = await GetLikedPostsFromUser(userId, query.include, query.pageNumber, query.pageSize);
+        if (postsLiked == null || postsLiked.Count == 0)
+            return new GetUserLikesResponse("No posts found!", false, userId, 0, new List<GetPostResponse>());
+
+        int countLikes = await LikesCountOfUser(userId);
+
+        return new GetUserLikesResponse($"Posts that user {userId} liked returned successfully",
+            true, userId, countLikes, postsLiked);
+    }
+
+    /// <summary>
+    /// Gets the publisher username for a given post.
+    /// </summary>
+    private async Task<string> PublisherOfPost(Guid postId)
+    {
+        return await _context.Posts
+            .Where(p => p.PostId == postId)
+            .Join(_context.Users, p => p.UserId, u => u.Id, (p, u) => u.UserName)
+            .FirstOrDefaultAsync() ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Gets the list of posts liked by a user, including comments and publisher info.
+    /// </summary>
+    private async Task<List<GetPostResponse>> GetLikedPostsFromUser(Guid userId, string? include, int pageNumber = 1, int pageSize = 10)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null)
+            return new List<GetPostResponse>();
+
+        IQueryable<Post> likedPosts = _context.Posts
+            .Where(p => p.Likes.Any(l => l.UserId == userId));
+
+        var query = likedPosts
+            .Join(_context.Users,
+            post => post.UserId,
+            user => user.Id,
+            (post,user) => new
+            {
+                Post = post,
+                User = user
+            }
+            );
+
+        List<GetPostResponse> results = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new GetPostResponse
+            {
+                PostId = x.Post.PostId,
+                Title = x.Post.Title,
+                Content = x.Post.Content,
+                PublishAt = x.Post.PublishedAt,
+                Publisher = x.User.UserName!,
+                Comments = new List<CommentDto>()
+            })
+            .ToListAsync();
+
+        if (!string.IsNullOrEmpty(include) && include.Contains("comments"))
+        {
+            var postIds = results.Select(r => r.PostId).ToList();
+            var comments = await _context.Comments
+                .Where(c => postIds.Contains(c.PostId))
+                .ToListAsync();
+
+            foreach (var result in results)
+            {
+                var relatedComments = comments
+                    .Where(c => c.PostId == result.PostId)
+                    .ToList();
+
+                result.Comments = _mapper.Map<List<CommentDto>>(relatedComments);
+            }
+        }
+
+
+        return results;
+    }
+
+    /// <summary>
+    /// Gets the number of likes for a user asynchronously.
+    /// </summary>
+    private async Task<int> LikesCountOfUser(Guid userId)
+    {
+        return await _context.Likes.CountAsync(l => l.UserId == userId);
     }
 }

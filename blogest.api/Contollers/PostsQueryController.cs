@@ -35,12 +35,19 @@ public class PostsQueryController : ControllerBase
     }
 
     [HttpGet("getAllByUser/{userId}")]
-    public async Task<IActionResult> GetAllPostsByUser([FromRoute] Guid userId,[FromQuery] string? include,[FromQuery] int pageNumber = 1,[FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetAllPostsByUser([FromRoute] Guid userId, [FromQuery] string? include, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        GetPostsByUserIdQuery query = new GetPostsByUserIdQuery(userId,include,pageNumber,pageSize);
+        GetPostsByUserIdQuery query = new GetPostsByUserIdQuery(userId, include, pageNumber, pageSize);
         GetPostsByCategoryResponse response = await _mediator.Send(query);
         if (response is { IsSuccess: false })
             return BadRequest(response);
+        return Ok(response);
+    }
+    [HttpGet("liked-by-user/{userId}")]
+    public async Task<IActionResult> GetPostsLikedByUser([FromRoute] Guid userId,[FromQuery] string? include,[FromQuery]int pageNumber = 1,[FromQuery]int pageSize = 10)
+    {
+        GetUserLikesQuery query = new GetUserLikesQuery(userId,include,pageNumber,pageSize);
+        GetUserLikesResponse response = await _mediator.Send(query);
         return Ok(response);
     }
 }

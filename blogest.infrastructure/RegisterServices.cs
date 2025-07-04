@@ -30,6 +30,7 @@ namespace blogest.infrastructure
             services.AddScoped<ICommentsQueryRepository, CommentsQueryRepository>();
             services.AddScoped<ICategoriesRepository, CategoriesCommandRepository>();
             services.AddScoped<ILikesCommandRepository, LikesCommandRepository>();
+            services.AddScoped<ILikesQueryRepository, LikesQueryRepository>();
 
             services.AddDbContext<BlogCommandContext>(options =>
             {
