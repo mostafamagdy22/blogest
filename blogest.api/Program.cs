@@ -1,6 +1,7 @@
 using DotNetEnv;
 
-
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using blogest.infrastructure;
 using blogest.application.Interfaces.services;
 using Serilog;
@@ -30,6 +31,22 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "anon",
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 10,
+                QueueLimit = 0,
+                Window = TimeSpan.FromMinutes(1)
+            }
+            ));
+    options.RejectionStatusCode = 429;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -54,7 +71,6 @@ builder.Services.AddVersionedApiExplorer(options =>
 
 builder.Services.AddInfraStructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
-builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>
 {
@@ -99,6 +115,9 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
+
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 if (app.Environment.IsDevelopment())
