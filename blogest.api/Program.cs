@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using blogest.api.SwaggerCofig;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 Env.Load("../blogest.infrastructure/.env");
 
@@ -27,7 +31,23 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations();
+});
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 builder.Services.AddInfraStructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
@@ -42,7 +62,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     options.Events = new JwtBearerEvents
-    { 
+    {
         OnMessageReceived = context =>
         {
             var token = context.Request.Cookies["jwt"];
@@ -81,9 +101,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
-    
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+    app.UseSwagger(options => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+    app.UseSwaggerUI(c =>
+    {
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"blogest API {description.GroupName.ToUpper()}");
+        }
+        c.RoutePrefix = "swagger";
+    });
 }
 
 app.MapControllers();

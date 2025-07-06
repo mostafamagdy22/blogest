@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers
 {
+    [ApiVersion("1.0")]
     [ApiController]
     [Route("api/[controller]")]
     public class TokensController : ControllerBase

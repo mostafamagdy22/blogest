@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using blogest.application.DTOs.responses.Posts;
 namespace blogest.api.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
     [Route("api/[controller]")]
     public class PostsCommandController : ControllerBase

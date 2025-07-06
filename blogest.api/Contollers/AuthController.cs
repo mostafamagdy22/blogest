@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace blogest.api.Contollers
 {
+    [ApiVersion("1.0")]
     [ApiController]
     [Route("api/[controller]")]
     [AllowAnonymous]
@@ -26,6 +28,7 @@ namespace blogest.api.Contollers
             _mediator = mediator;
         }
         [HttpPost("LogOut")]
+       
         public async Task<IActionResult> LogOut()
         {
             string result = await _authService.LogOut();
@@ -79,9 +82,9 @@ namespace blogest.api.Contollers
 
             var user = await _usersRepository.GetUserByEmailAsync(email);
             if (user == null)
-                user = await _authService.CreateUserFromGoogleAsync(email,name,googleId);
+                user = await _authService.CreateUserFromGoogleAsync(email, name, googleId);
 
-            var jwt = await _authService.SignIn(new SignInCommand(email,null));
+            var jwt = await _authService.SignIn(new SignInCommand(email, null));
 
             return Ok();
         }

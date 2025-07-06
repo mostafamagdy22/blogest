@@ -242,3 +242,6 @@ D:/projects/Blogest/blogest.api/obj/Debug/net9.0/ref/blogest.api.dll
 /home/mostafa/projects/blogest/blogest.api/obj/Debug/net9.0/blogest.api.pdb
 /home/mostafa/projects/blogest/blogest.api/obj/Debug/net9.0/blogest.api.genruntimeconfig.cache
 /home/mostafa/projects/blogest/blogest.api/obj/Debug/net9.0/ref/blogest.api.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Swashbuckle.AspNetCore.Annotations.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Microsoft.AspNetCore.Mvc.Versioning.dll
+/home/mostafa/projects/blogest/blogest.api/bin/Debug/net9.0/Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer.dll
