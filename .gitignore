@@ -1,3 +1,4 @@
 .env
-/vscDB
-/blogestproj
+vscDB/
+blogestproj/
+Notes
