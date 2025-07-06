@@ -33,7 +33,7 @@ public class PostsQueryRepository : IPostsQueryRepository
 
         var response = _mapper.Map<GetPostResponse>(post);
 
-        var publisher = await _context.Users.Where(u => u.Id == post.UserId).Select(u => u.UserName).FirstOrDefaultAsync();
+        var publisher = await _context.Users.Where(u => u.Id == post.UserId).Select(u => new {u.Id,u.UserName}).FirstOrDefaultAsync();
 
         var comments = new List<CommentDto>();
 
@@ -44,7 +44,7 @@ public class PostsQueryRepository : IPostsQueryRepository
         }
 
 
-        return response with { Publisher = publisher, Comments = comments };
+        return response with { UserId = publisher.Id,Publisher = publisher.UserName, Comments = comments };
     }
 
     public async Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId,
@@ -178,7 +178,8 @@ public class PostsQueryRepository : IPostsQueryRepository
                 Content = x.Post.Content,
                 PublishAt = x.Post.PublishedAt,
                 Publisher = x.User.UserName!,
-                Comments = new List<CommentDto>()
+                Comments = new List<CommentDto>(),
+                UserId = x.User.Id
             })
             .ToListAsync();
 

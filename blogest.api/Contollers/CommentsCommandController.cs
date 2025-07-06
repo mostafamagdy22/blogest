@@ -17,6 +17,11 @@ public class CommentsCommandController : ControllerBase
     {
         _mediator = mediator;
     }
+    /// <summary>
+    /// Creates a new comment on a post.
+    /// </summary>
+    /// <param name="createCommentCommand">Comment creation data.</param>
+    /// <returns>200 if successful, 400 if failed.</returns>
     [HttpPost("Create")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentCommand createCommentCommand)
@@ -27,6 +32,11 @@ public class CommentsCommandController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Deletes a comment by its ID.
+    /// </summary>
+    /// <param name="commentId">The ID of the comment to delete.</param>
+    /// <returns>200 if successful, 400 if failed.</returns>
     [HttpDelete("delete/{commentId}")]
     public async Task<IActionResult> DeleteComment([FromRoute] Guid commentId)
     {
@@ -37,6 +47,12 @@ public class CommentsCommandController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Updates the content of a comment.
+    /// </summary>
+    /// <param name="commentId">The ID of the comment to update.</param>
+    /// <param name="content">The new content for the comment.</param>
+    /// <returns>200 if successful, 400 if failed.</returns>
     [HttpPut("update/{commentId}")]
     public async Task<IActionResult> UpdateComment([FromRoute] Guid commentId, [FromBody] UpdateCommentRequestDto content)
     {

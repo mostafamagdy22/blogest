@@ -17,6 +17,11 @@ namespace blogest.api.Contollers
         {
             _mediator = mediator;
         }
+        /// <summary>
+        /// Creates a new category.
+        /// </summary>
+        /// <param name="command">Category creation data.</param>
+        /// <returns>200 if successful, 400 if failed.</returns>
         [HttpPost("Create")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryCommand command)

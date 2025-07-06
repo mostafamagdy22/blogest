@@ -17,6 +17,11 @@ public class CommentsQueryController : ControllerBase
     {
         _mediator = mediator;
     }
+    /// <summary>
+    /// Gets a comment by its ID.
+    /// </summary>
+    /// <param name="CommentId">The ID of the comment.</param>
+    /// <returns>The comment details.</returns>
     [HttpGet("Get/{CommentId}")]
     public async Task<IActionResult> GetCommentById([FromRoute] Guid CommentId)
     {
@@ -25,6 +30,13 @@ public class CommentsQueryController : ControllerBase
 
         return Ok(response);
     }
+    /// <summary>
+    /// Gets all comments on a post (paginated).
+    /// </summary>
+    /// <param name="PostId">The ID of the post.</param>
+    /// <param name="pageNumber">Page number (default 1).</param>
+    /// <param name="pageSize">Page size (default 10).</param>
+    /// <returns>Paginated list of comments.</returns>
     [HttpGet("GetAll/{PostId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetAllCommentsByPostId([FromRoute] Guid PostId,int pageNumber = 1,int pageSize = 10)
@@ -33,6 +45,11 @@ public class CommentsQueryController : ControllerBase
         GetCommentsOnPostResponse response = await _mediator.Send(query);
         return Ok(response);
     }
+    /// <summary>
+    /// Gets all comments made by a user.
+    /// </summary>
+    /// <param name="UserId">The ID of the user.</param>
+    /// <returns>List of comments by user.</returns>
     [HttpGet("GetAllCommentsOfUser/{UserId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetAllCommentsOfUser([FromRoute] Guid UserId)

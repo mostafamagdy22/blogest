@@ -16,6 +16,11 @@ public class LikesCommandController : ControllerBase
     {
         _mediator = mediator;
     }
+    /// <summary>
+    /// Adds a like to a post by the current user.
+    /// </summary>
+    /// <param name="postId">The ID of the post to like.</param>
+    /// <returns>200 if successful, 400 if already liked or error.</returns>
     [HttpPost("AddLike/{postId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AddLike([FromRoute] Guid postId)
@@ -25,6 +30,11 @@ public class LikesCommandController : ControllerBase
         return response.success ? Ok(response) : BadRequest(response.message);
     }
 
+    /// <summary>
+    /// Removes a like from a post by the current user.
+    /// </summary>
+    /// <param name="postId">The ID of the post to unlike.</param>
+    /// <returns>200 if successful, 404 if not found.</returns>
     [HttpDelete("UnLike/{postId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UnLike([FromRoute] Guid postId)

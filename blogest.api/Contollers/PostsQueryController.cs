@@ -14,6 +14,11 @@ public class PostsQueryController : ControllerBase
     {
         _mediator = mediator;
     }
+    /// <summary>
+    /// Gets a post by its ID.
+    /// </summary>
+    /// <param name="postId">The ID of the post.</param>
+    /// <returns>The post details if found, 404 if not found.</returns>
     [HttpGet("get/{postId}")]
     public async Task<IActionResult> GetPostByIdAsync([FromRoute] Guid postId)
     {
@@ -24,6 +29,14 @@ public class PostsQueryController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Gets all posts in a category with pagination and optional includes.
+    /// </summary>
+    /// <param name="categoryId">The category ID.</param>
+    /// <param name="pageNumber">Page number (default 1).</param>
+    /// <param name="pageSize">Page size (default 10).</param>
+    /// <param name="include">Related data to include (optional).</param>
+    /// <returns>Paginated list of posts.</returns>
     [HttpGet("getAllByCategory/{categoryId}")]
     public async Task<IActionResult> GetAllPostsByCategory([FromRoute] int categoryId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? include = "")
     {
@@ -34,6 +47,14 @@ public class PostsQueryController : ControllerBase
         return Ok(response);
     }
 
+    /// <summary>
+    /// Gets all posts by a user with pagination and optional includes.
+    /// </summary>
+    /// <param name="userId">The user ID.</param>
+    /// <param name="include">Related data to include (optional).</param>
+    /// <param name="pageNumber">Page number (default 1).</param>
+    /// <param name="pageSize">Page size (default 10).</param>
+    /// <returns>Paginated list of posts by user.</returns>
     [HttpGet("getAllByUser/{userId}")]
     public async Task<IActionResult> GetAllPostsByUser([FromRoute] Guid userId, [FromQuery] string? include, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
@@ -43,6 +64,14 @@ public class PostsQueryController : ControllerBase
             return BadRequest(response);
         return Ok(response);
     }
+    /// <summary>
+    /// Gets all posts liked by a user.
+    /// </summary>
+    /// <param name="userId">The user ID.</param>
+    /// <param name="include">Related data to include (optional).</param>
+    /// <param name="pageNumber">Page number (default 1).</param>
+    /// <param name="pageSize">Page size (default 10).</param>
+    /// <returns>Paginated list of liked posts.</returns>
     [HttpGet("liked-by-user/{userId}")]
     public async Task<IActionResult> GetPostsLikedByUser([FromRoute] Guid userId,[FromQuery] string? include,[FromQuery]int pageNumber = 1,[FromQuery]int pageSize = 10)
     {

@@ -15,6 +15,11 @@ namespace blogest.api.Contollers
         {
             _mediator = mediator;
         }
+        /// <summary>
+        /// Refreshes the JWT access token using a valid refresh token.
+        /// </summary>
+        /// <param name="request">Refresh token request data.</param>
+        /// <returns>New access token if successful, 400 if failed.</returns>
         [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh(TokenRequestCommand request)
         {

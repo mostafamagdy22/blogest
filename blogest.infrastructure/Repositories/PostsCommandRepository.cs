@@ -52,13 +52,6 @@ namespace blogest.infrastructure.Repositories
                 return new DeletePostResponse(IsSuccess: false,
                 Message: "Post not found");
             }
-
-            Guid? userId = _usersRepository.GetUserIdFromCookies();
-            
-            if (userId != post.UserId)
-            {
-                return new DeletePostResponse(IsSuccess: false, Message: $"Some Problem happend in delete post {postId}");
-            }
             _commandContext.Posts.Remove(post);
             await _commandContext.SaveChangesAsync();
 

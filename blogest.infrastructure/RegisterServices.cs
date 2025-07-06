@@ -13,6 +13,9 @@ using blogest.infrastructure.Identity;
 using MediatR;
 using blogest.application.Interfaces.repositories.Categories;
 using blogest.application.Interfaces.repositories.Likes;
+using blogest.domain.Constants;
+using blogest.infrastructure.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace blogest.infrastructure
 {
@@ -31,6 +34,13 @@ namespace blogest.infrastructure
             services.AddScoped<ICategoriesRepository, CategoriesCommandRepository>();
             services.AddScoped<ILikesCommandRepository, LikesCommandRepository>();
             services.AddScoped<ILikesQueryRepository, LikesQueryRepository>();
+            services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AuthorizationPolicies.CandEditPost, policy =>
+                        policy.Requirements.Add(new IsPostAuthorRequirement()));
+            });
 
             services.AddDbContext<BlogCommandContext>(options =>
             {

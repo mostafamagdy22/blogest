@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using blogest.infrastructure.persistence;
 
@@ -11,9 +12,11 @@ using blogest.infrastructure.persistence;
 namespace blogest.infrastructure.Migrations
 {
     [DbContext(typeof(BlogCommandContext))]
-    partial class BlogCommandContextModelSnapshot : ModelSnapshot
+    [Migration("20250706152408_EnableCascadeDeleteOnLikes")]
+    partial class EnableCascadeDeleteOnLikes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

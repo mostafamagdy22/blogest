@@ -34,6 +34,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.EnableAnnotations();
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 builder.Services.AddApiVersioning(options =>
@@ -53,7 +56,6 @@ builder.Services.AddInfraStructure(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

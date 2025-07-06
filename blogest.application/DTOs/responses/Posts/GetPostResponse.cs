@@ -8,4 +8,5 @@ public record GetPostResponse
     public string Title { get; init; } = string.Empty;
     public DateTime? PublishAt { get; init; }
     public string Publisher { get; init; } = string.Empty;
+    public Guid UserId { get; init; }
 }

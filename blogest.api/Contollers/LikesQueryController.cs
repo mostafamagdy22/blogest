@@ -15,6 +15,11 @@ namespace blogest.api.Contollers
         {
             _mediator = mediator;
         }
+        /// <summary>
+        /// Gets all likes for a specific post.
+        /// </summary>
+        /// <param name="postId">The ID of the post.</param>
+        /// <returns>List of users who liked the post.</returns>
         [HttpGet("GetPostLikes/{postId}")]
         public async Task<IActionResult> GetPostLikes([FromRoute] Guid postId)
         {
