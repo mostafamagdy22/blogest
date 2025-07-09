@@ -16,6 +16,9 @@ using blogest.application.Interfaces.repositories.Likes;
 using blogest.domain.Constants;
 using blogest.infrastructure.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using blogest.infrastructure.Configuration;
+using Hangfire;
+using Microsoft.Data.SqlClient;
 
 namespace blogest.infrastructure
 {
@@ -26,7 +29,7 @@ namespace blogest.infrastructure
             DotNetEnv.Env.Load();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IPostsCommandRepository, PostsCommandRepository>();
-            services.AddScoped<IPostsQueryRepository,PostsQueryRepository>();
+            services.AddScoped<IPostsQueryRepository, PostsQueryRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ICommentsCommandRepository, CommentsCommandRepository>();
@@ -35,7 +38,18 @@ namespace blogest.infrastructure
             services.AddScoped<ILikesCommandRepository, LikesCommandRepository>();
             services.AddScoped<ILikesQueryRepository, LikesQueryRepository>();
             services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
+            services.AddScoped<IImageStorageService, CloudinaryStorageService>();
 
+            var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+            var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            var connectionString = $"Server={dbServer};Database=blogestCommand;User Id={dbUser};Password={dbPassword};TrustServerCertificate=True;";
+
+            services.AddHangfire(options =>
+            {
+                options.UseSqlServerStorage(() => new SqlConnection(connectionString));
+            });
+            services.AddHangfireServer();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(AuthorizationPolicies.CandEditPost, policy =>
@@ -44,10 +58,6 @@ namespace blogest.infrastructure
 
             services.AddDbContext<BlogCommandContext>(options =>
             {
-                var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
-                var dbUser = Environment.GetEnvironmentVariable("DB_USER");
-                var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-                var connectionString = $"Server={dbServer};Database=blogestCommand;User Id={dbUser};Password={dbPassword};TrustServerCertificate=True;";
                 options.UseSqlServer(connectionString,
                 x => x.MigrationsAssembly("blogest.infrastructure"));
             });
@@ -57,7 +67,7 @@ namespace blogest.infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("blogest.infrastructure"));
             });
-            
+
             services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;

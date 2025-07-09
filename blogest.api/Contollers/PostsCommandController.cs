@@ -8,7 +8,7 @@ namespace blogest.api.Controllers
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class PostsCommandController : ControllerBase
     {
         private readonly IMediator _mediator;

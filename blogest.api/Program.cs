@@ -15,6 +15,10 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using blogest.api.SwaggerCofig;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using blogest.infrastructure.Configuration;
+using System.Reflection;
+using Hangfire;
+using blogest.api.HangFireJobs;
 
 Env.Load("../blogest.infrastructure/.env");
 
@@ -30,11 +34,20 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
+builder.Services.AddTransient<UploadImageJob>();
 
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("Cloudinary")
+);
 builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
+    {
+        string path = httpContext.Request.Path.Value;
+        if (path.StartsWith("/swagger"))
+            return RateLimitPartition.GetNoLimiter("swagger");
+
+        return RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "anon",
             factory: partition => new FixedWindowRateLimiterOptions
             {
@@ -42,18 +55,21 @@ builder.Services.AddRateLimiter(options =>
                 PermitLimit = 10,
                 QueueLimit = 0,
                 Window = TimeSpan.FromMinutes(1)
-            }
-            ));
+            });
+    });
     options.RejectionStatusCode = 429;
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.EnableAnnotations();
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.EnableAnnotations();
+
+    options.SupportNonNullableReferenceTypes();
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
+    options.IncludeXmlComments(xmlPath);
 });
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 builder.Services.AddApiVersioning(options =>
@@ -116,10 +132,19 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
 
-app.UseRateLimiter();
+app.UseRateLimiter(new RateLimiterOptions
+{
+    RejectionStatusCode = 429,
+    OnRejected = async (context,token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsync("Too many requests",token);
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHangfireDashboard("/dashboard-hangfire");
 if (app.Environment.IsDevelopment())
 {
     var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();

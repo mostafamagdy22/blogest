@@ -9,7 +9,7 @@ namespace blogest.api.Contollers
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class CategoriesCommandController : ControllerBase
     {
         private readonly IMediator _mediator;
