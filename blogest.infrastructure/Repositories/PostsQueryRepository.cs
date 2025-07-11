@@ -43,8 +43,10 @@ public class PostsQueryRepository : IPostsQueryRepository
             comments.Add(new CommentDto(comment.CommentId, comment.Content, comment.PublishedAt, author));
         }
 
-
-        return response with { UserId = publisher.Id,Publisher = publisher.UserName, Comments = comments };
+        response.UserId = publisher.Id;
+        response.Publisher = publisher.UserName;
+        response.Comments = comments;
+        return response;
     }
 
     public async Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId,
@@ -75,7 +77,9 @@ public class PostsQueryRepository : IPostsQueryRepository
                 GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId, pageNumber, pageSize);
                 List<CommentDto> dtos = comments.Comments;
                 var mapped = getPosts[i];
-                getPosts[i] = mapped with { Publisher = publisher, Comments = dtos };
+                mapped.Publisher = publisher;
+                mapped.Comments = dtos;
+                getPosts[i] = mapped;
 
             }
         }
@@ -102,11 +106,11 @@ public class PostsQueryRepository : IPostsQueryRepository
         var postResponseTasks = posts.Select(async post =>
         {
             GetPostResponse dto = _mapper.Map<GetPostResponse>(post);
-            dto = dto with { Publisher = userDict.GetValueOrDefault(post.UserId) ?? "UnKnown" };
+            dto.Publisher = userDict.GetValueOrDefault(post.UserId) ?? "UnKnown";
             if (query.include == "comments")
             {
                 GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId);
-                dto = dto with { Comments = comments.Comments };
+                dto.Comments = comments.Comments;
             }
 
             return dto;

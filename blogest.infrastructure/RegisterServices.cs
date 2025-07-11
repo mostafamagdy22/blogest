@@ -39,6 +39,7 @@ namespace blogest.infrastructure
             services.AddScoped<ILikesQueryRepository, LikesQueryRepository>();
             services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
             services.AddScoped<IImageStorageService, CloudinaryStorageService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
             var dbUser = Environment.GetEnvironmentVariable("DB_USER");

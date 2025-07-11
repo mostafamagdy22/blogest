@@ -1,5 +1,6 @@
 using AutoMapper;
 using blogest.application.DTOs.responses;
+using blogest.application.DTOs.responses.Users;
 using blogest.application.Features.commands;
 using blogest.domain.Entities;
 using blogest.infrastructure.Identity;
@@ -34,6 +35,12 @@ namespace blogest.infrastructure.Mapping
                 .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt))
                 .ReverseMap();
 
+            CreateMap<AppUser, GetUserInfoResponse>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.Image))
+                .ForMember(dest => dest.userId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
         }
     }
 }

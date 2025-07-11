@@ -114,5 +114,20 @@ namespace blogest.api.Contollers
 
             return Ok();
         }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgetPasswordCommand command)
+        {
+            ForgetPasswordResponse response = await _mediator.Send(command);
+            if (!response.IsSuccess)
+                return BadRequest(response.Message);
+
+            return Ok(response.Message);
+        }
+        [HttpPost("forgot-password-callback")]
+        public async Task<IActionResult> ForgotPasswordCallBack([FromBody]FrogetPasswordCallBackCommand command)
+        {
+            ForgetPasswordCallBackResponse response = await _mediator.Send(command);
+            return Ok(response);
+        }
     }
 }

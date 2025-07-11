@@ -1,3 +1,5 @@
+using blogest.application.DTOs.responses.Users;
+
 namespace blogest.application.Interfaces.repositories.Users;
 
 public interface IUsersRepository
@@ -22,4 +24,5 @@ public interface IUsersRepository
     /// <returns>The user ID extracted from cookies.</returns>
     public Guid? GetUserIdFromCookies();
     public Task<User> GetUserByEmailAsync(string email);
+    public Task<GetUserInfoResponse> GetUserInfoById(Guid userId,string? include,int pageNumber = 1,int pageSize = 10);
 }

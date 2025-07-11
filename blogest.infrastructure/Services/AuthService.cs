@@ -5,6 +5,9 @@ using blogest.infrastructure.persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication;
+using System.Web;
+using Microsoft.Extensions.Configuration;
+using blogest.domain.Constants;
 namespace blogest.infrastructure.Services
 {
     public class AuthService : IAuthService
@@ -15,8 +18,12 @@ namespace blogest.infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUsersRepository _useresRepository;
         private readonly BlogCommandContext _context;
-        public AuthService(BlogCommandContext blogCommandContext, IUsersRepository usersRepository, IMapper mapper, UserManager<AppUser> userManager, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
+        private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
+        public AuthService(IEmailService emailService, IConfiguration configuration, BlogCommandContext blogCommandContext, IUsersRepository usersRepository, IMapper mapper, UserManager<AppUser> userManager, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
         {
+            _emailService = emailService;
+            _configuration = configuration;
             _context = blogCommandContext;
             _useresRepository = usersRepository;
             _mapper = mapper;
@@ -138,6 +145,75 @@ namespace blogest.infrastructure.Services
             User user = _mapper.Map<User>(newUser);
 
             return user;
+        }
+
+        public async Task<ForgetPasswordResponse> ForgetPassword(string email)
+        {
+            AppUser user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return new ForgetPasswordResponse
+                {
+                    IsSuccess = false,
+                    Message = "No user found with this email"
+                };
+
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string encodedToken = HttpUtility.UrlEncode(token);
+
+            string resetUrl = $"{_configuration["App:ClientBaseUrl"]}/reset-password?token={encodedToken}&email={email}";
+            string body = string.Format(EmailMessages.ResetPasswordBodyTemplate, resetUrl);
+
+            await _emailService.SendEmailAsync(email, EmailMessages.ResetPasswordSubject, body);
+
+            return new ForgetPasswordResponse { IsSuccess = true, Message = "Reset password email sent successfully" };
+        }
+
+        public async Task<ForgetPasswordCallBackResponse> ForgetPasswordCallBack(string email, string token, string password)
+        {
+            AppUser user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return new ForgetPasswordCallBackResponse
+                {
+                    IsSuccess = false,
+                    isAuth = false,
+                    Message = "User not found"
+                };
+
+            string decodedToken = HttpUtility.UrlDecode(token);
+            bool isValid = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider, "ResetPassword", decodedToken);
+            if (!isValid) return new ForgetPasswordCallBackResponse
+            {
+                IsSuccess = false,
+                isAuth = false,
+                Message = "Bad Request"
+            };
+
+            IdentityResult result = await _userManager.ResetPasswordAsync(user,decodedToken,password);
+
+            if (!result.Succeeded)
+                return new ForgetPasswordCallBackResponse
+                {
+                    IsSuccess = false,
+                    isAuth = false,
+                    Message = "BadRequest"
+                };
+
+            SignInResponse signInResult =  await SignIn(new SignInCommand(user.Email,password));
+
+            if (!signInResult.isAuth)
+                return new ForgetPasswordCallBackResponse
+                {
+                    IsSuccess = false,
+                    isAuth = false,
+                    Message = "Bad Request"
+                };
+
+            return new ForgetPasswordCallBackResponse
+                {
+                    IsSuccess = true,
+                    isAuth = true,
+                    Message = "Reset password done successfully"
+                };
         }
     }
 }
