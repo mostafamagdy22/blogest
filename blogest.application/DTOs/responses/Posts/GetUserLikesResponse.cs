@@ -5,4 +5,8 @@ public record GetUserLikesResponse(
     bool success,
     Guid? userId,
     int LikesCount,
-    List<GetPostResponse>? LikedPosts);
+    List<GetPostResponse>? LikedPosts,
+    int TotalCount,
+    int PageNumber,
+    int PageSize
+);

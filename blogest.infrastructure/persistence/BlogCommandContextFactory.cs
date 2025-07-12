@@ -21,7 +21,7 @@ namespace blogest.infrastructure.persistence
             Console.WriteLine("== Connection String from ENV ==");
             Console.WriteLine(connectionString ?? "NULL");
             if (string.IsNullOrEmpty(password))
-                throw new InvalidOperationException("Environment variable 'DB_PASSWORD' is not set.");
+                throw new InvalidOperationException(blogest.domain.Constants.ErrorMessages.BadRequest);
 
             optionsBuilder.UseSqlServer(connectionString, b =>
             b.MigrationsAssembly("blogest.infrastructure"));

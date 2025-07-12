@@ -49,6 +49,7 @@ public class UsersRepository : IUsersRepository
     {
         AppUser? user;
         List<GetPostResponse>? paginatedPosts = null;
+        int totalCount = 0;
 
         if (!string.IsNullOrEmpty(include) && include.Contains("posts"))
         {
@@ -59,13 +60,18 @@ public class UsersRepository : IUsersRepository
                 return new GetUserInfoResponse
                 {
                     IsSuccess = false,
-                    Message = "No user found"
+                    Message = "No user found",
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
                 };
 
-            paginatedPosts = await _blogCommandContext.Posts
+            var postsQuery = _blogCommandContext.Posts
                             .Include(p => p.Comments)
                             .Where(p => p.UserId == userId)
-                            .OrderByDescending(p => p.PublishedAt)
+                            .OrderByDescending(p => p.PublishedAt);
+            totalCount = await postsQuery.CountAsync();
+            paginatedPosts = await postsQuery
                             .Skip((pageNumber - 1) * pageSize)
                             .Take(pageSize)
                             .Select(p => new GetPostResponse
@@ -86,7 +92,10 @@ public class UsersRepository : IUsersRepository
                 return new GetUserInfoResponse
                 {
                     IsSuccess = false,
-                    Message = "User not Found"
+                    Message = "User not Found",
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
                 };
         }
 
@@ -94,6 +103,9 @@ public class UsersRepository : IUsersRepository
         userDto.IsSuccess = true;
         userDto.Message = "User info returned successfully";
         userDto.PostsOfUser = paginatedPosts;
+        userDto.TotalCount = totalCount;
+        userDto.PageNumber = pageNumber;
+        userDto.PageSize = pageSize;
 
         return userDto;
     }

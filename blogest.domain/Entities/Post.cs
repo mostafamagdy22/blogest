@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace blogest.domain.Entities
 {
-    public class Post
-    {
+	public class Post
+	{
 		public Guid PostId { get; private set; }
 		public string Title { get; private set; }
 		public string Content { get; private set; }
@@ -31,9 +31,9 @@ namespace blogest.domain.Entities
 		public void SetId(Guid id)
 		{
 			if (PostId != Guid.Empty)
-				throw new InvalidOperationException("Post ID has already been set.");
+				throw new InvalidOperationException(blogest.domain.Constants.ErrorMessages.Conflict);
 			if (id == Guid.Empty)
-				throw new ArgumentException("Post ID cannot be empty.", nameof(id));
+				throw new ArgumentException(blogest.domain.Constants.ErrorMessages.BadRequest, nameof(id));
 
 			PostId = id;
 		}

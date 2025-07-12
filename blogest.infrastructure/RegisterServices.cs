@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using blogest.infrastructure.Configuration;
 using Hangfire;
 using Microsoft.Data.SqlClient;
+using Serilog;
 
 namespace blogest.infrastructure
 {
@@ -40,6 +41,11 @@ namespace blogest.infrastructure
             services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
             services.AddScoped<IImageStorageService, CloudinaryStorageService>();
             services.AddScoped<IEmailService, EmailService>();
+
+            Log.Logger = new LoggerConfiguration()
+                        .WriteTo.Console()
+                        .WriteTo.Seq("http://localhost:5341")
+                        .CreateLogger();
 
             var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
             var dbUser = Environment.GetEnvironmentVariable("DB_USER");

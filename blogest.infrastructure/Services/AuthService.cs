@@ -133,7 +133,7 @@ namespace blogest.infrastructure.Services
             var result = await _userManager.CreateAsync(newUser);
 
             if (!result.Succeeded)
-                throw new Exception("User creation failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                throw new Exception($"{blogest.domain.Constants.ErrorMessages.InternalServerError} Details: " + string.Join(", ", result.Errors.Select(e => e.Description)));
             UserLoginInfo info = new UserLoginInfo(
                 loginProvider: "Google",
                 providerKey: googleId,
@@ -141,7 +141,7 @@ namespace blogest.infrastructure.Services
             );
             var loginResult = await _userManager.AddLoginAsync(newUser,info);
             if (!loginResult.Succeeded)
-                throw new Exception("Login link failed: " + string.Join(", ",loginResult.Errors.Select(e => e.Description)));
+                throw new Exception($"{blogest.domain.Constants.ErrorMessages.InternalServerError} Details: " + string.Join(", ",loginResult.Errors.Select(e => e.Description)));
             User user = _mapper.Map<User>(newUser);
 
             return user;

@@ -52,16 +52,19 @@ public class PostsQueryRepository : IPostsQueryRepository
     public async Task<GetPostsByCategoryResponse> GetPostsByGategory(int categoryId,
         string? include, int pageNumber = 1, int pageSize = 10)
     {
-        List<Post> posts = await _context.Posts
+        var query = _context.Posts
             .Include(p => p.Comments)
             .Include(p => p.PostCategories)
-            .Where(p => p.PostCategories.Any(pc => pc.CategoryId == categoryId))
+            .Where(p => p.PostCategories.Any(pc => pc.CategoryId == categoryId));
+
+        int totalCount = await query.CountAsync();
+        List<Post> posts = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
         if (posts.Count == 0)
-            return new GetPostsByCategoryResponse("no posts found", false, null);
+            return new GetPostsByCategoryResponse("no posts found", false, null, 0, pageNumber, pageSize);
 
         List<GetPostResponse> getPosts = _mapper.Map<List<GetPostResponse>>(posts);
 
@@ -72,7 +75,7 @@ public class PostsQueryRepository : IPostsQueryRepository
                 .Where(u => u.Id == post.UserId)
                 .Select(u => u.UserName)
                 .FirstOrDefaultAsync() ?? string.Empty;
-            if (include.Contains("comments"))
+            if (include != null && include.Contains("comments"))
             {
                 GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId, pageNumber, pageSize);
                 List<CommentDto> dtos = comments.Comments;
@@ -80,25 +83,26 @@ public class PostsQueryRepository : IPostsQueryRepository
                 mapped.Publisher = publisher;
                 mapped.Comments = dtos;
                 getPosts[i] = mapped;
-
             }
         }
 
-        return new GetPostsByCategoryResponse("returned successfully", true, getPosts);
+        return new GetPostsByCategoryResponse("returned successfully", true, getPosts, totalCount, pageNumber, pageSize);
     }
 
 
     public async Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query)
     {
-        IQueryable<Post> postsQuery = _context.Posts.Where(p => p.UserId == query.userId)
-                        .Skip((query.pageNumber - 1) * query.pageSize)
-                        .Take(query.pageSize);
+        var postsQuery = _context.Posts.Where(p => p.UserId == query.userId);
+        int totalCount = await postsQuery.CountAsync();
+        var pagedPostsQuery = postsQuery
+            .Skip((query.pageNumber - 1) * query.pageSize)
+            .Take(query.pageSize);
 
-        List<Post> posts = await postsQuery.ToListAsync();
+        List<Post> posts = await pagedPostsQuery.ToListAsync();
 
-        if (posts.Count == 0) return new GetPostsByCategoryResponse(Message: "No posts found to this user", IsSuccess: false, Posts: null);
+        if (posts.Count == 0) return new GetPostsByCategoryResponse(Message: "No posts found to this user", IsSuccess: false, Posts: null, 0, query.pageNumber, query.pageSize);
 
-        List<Guid> userIds = await postsQuery.Select(p => p.UserId).Distinct().ToListAsync();
+        List<Guid> userIds = await pagedPostsQuery.Select(p => p.UserId).Distinct().ToListAsync();
         Dictionary<Guid, string?> userDict = await _context.Users
             .Where(u => userIds.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.UserName);
@@ -107,9 +111,9 @@ public class PostsQueryRepository : IPostsQueryRepository
         {
             GetPostResponse dto = _mapper.Map<GetPostResponse>(post);
             dto.Publisher = userDict.GetValueOrDefault(post.UserId) ?? "UnKnown";
-            if (query.include == "comments")
+            if (query.include != null && query.include.Contains("comments"))
             {
-                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId);
+                GetCommentsOnPostResponse comments = await _commentsQueryRepository.GetCommentsByPostId(post.PostId, query.pageNumber, query.pageSize);
                 dto.Comments = comments.Comments;
             }
 
@@ -121,21 +125,26 @@ public class PostsQueryRepository : IPostsQueryRepository
         return new GetPostsByCategoryResponse(
             Message: $"Posts of user {query.userId} returned successfully",
             IsSuccess: true,
-            Posts: postResponses.ToList()
+            Posts: postResponses.ToList(),
+            TotalCount: totalCount,
+            PageNumber: query.pageNumber,
+            PageSize: query.pageSize
         );
     }
 
     public async Task<GetUserLikesResponse> GetUserLikes(GetUserLikesQuery query)
     {
         var userId = query.UserId;
+        var likedPostsQuery = _context.Posts.Where(p => p.Likes.Any(l => l.UserId == userId));
+        int totalCount = await likedPostsQuery.CountAsync();
         List<GetPostResponse> postsLiked = await GetLikedPostsFromUser(userId, query.include, query.pageNumber, query.pageSize);
         if (postsLiked == null || postsLiked.Count == 0)
-            return new GetUserLikesResponse("No posts found!", false, userId, 0, new List<GetPostResponse>());
+            return new GetUserLikesResponse("No posts found!", false, userId, 0, new List<GetPostResponse>(), 0, query.pageNumber, query.pageSize);
 
         int countLikes = await LikesCountOfUser(userId);
 
         return new GetUserLikesResponse($"Posts that user {userId} liked returned successfully",
-            true, userId, countLikes, postsLiked);
+            true, userId, countLikes, postsLiked, totalCount, query.pageNumber, query.pageSize);
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ public class CommentsQueryRepository : ICommentsQueryRepository
         (comment, user) => new { Comment = comment, User = user }).ToListAsync();
         var comment = comment1.FirstOrDefault(c => c.Comment.CommentId == commentId);
         if (comment == null)
-            throw new Exception("No comment by this id!");
+            throw new Exception(blogest.domain.Constants.ErrorMessages.NotFound);
 
 
         return new GetCommentByIdResponse(
@@ -38,28 +38,27 @@ public class CommentsQueryRepository : ICommentsQueryRepository
         .FirstOrDefaultAsync(p => p.PostId == postId);
 
     if (post == null)
-        throw new Exception("No post by this id!");
+        throw new Exception(blogest.domain.Constants.ErrorMessages.NotFound);
 
     if (post.Comments == null || post.Comments.Count == 0)
-        return new GetCommentsOnPostResponse(new List<CommentDto>());
+        return new GetCommentsOnPostResponse(new List<CommentDto>(), 0, pageNumber, pageSize);
 
     List<Guid> userIds = post.Comments.Select(c => c.UserId).Distinct().ToList();
     List<AppUser> users = await _context.Users
         .Where(u => userIds.Contains(u.Id))
         .ToListAsync();
 
-    
     var userDict = users.ToDictionary(u => u.Id, u => u.UserName);
 
+    int totalCount = post.Comments.Count;
     List<CommentDto> comments = post.Comments.Select(c =>
     {
         userDict.TryGetValue(c.UserId, out var userName);
-        userName ??= "Unknown User";  
-        
+        userName ??= "Unknown User";
         return new CommentDto(c.CommentId, c.Content, c.PublishedAt, userName);
     }).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
-    return new GetCommentsOnPostResponse(comments);
+    return new GetCommentsOnPostResponse(comments, totalCount, pageNumber, pageSize);
     }
 
     public async Task<GetCommentsOfUserResponse> GetCommentsOfUser(Guid userId,int pageNumber = 1,int pageSize = 10)
@@ -67,13 +66,14 @@ public class CommentsQueryRepository : ICommentsQueryRepository
         AppUser user = await _context.Users.FindAsync(userId);
 
         if (user == null)
-            throw new Exception("No user by this id!");
+            throw new Exception(blogest.domain.Constants.ErrorMessages.NotFound);
 
         List<Comment> query = await _context.Comments.Where(c => c.UserId == userId).ToListAsync();
-        if (query == null || query.Count == 0)
-            return new GetCommentsOfUserResponse(new List<CommentDto>());
+        int totalCount = query.Count;
+        if (query == null || totalCount == 0)
+            return new GetCommentsOfUserResponse(new List<CommentDto>(), 0, pageNumber, pageSize);
 
         List<CommentDto> comments = query.Select(c => _mapper.Map<CommentDto>(c)).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-        return new GetCommentsOfUserResponse(comments);
+        return new GetCommentsOfUserResponse(comments, totalCount, pageNumber, pageSize);
     }
 }

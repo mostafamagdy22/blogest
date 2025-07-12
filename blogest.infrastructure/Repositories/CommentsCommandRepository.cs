@@ -18,7 +18,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
         Guid? userIdFromCookies = _usersRepository.GetUserIdFromCookies();
 
         if (comment.UserId != userIdFromCookies)
-            throw new Exception("Some problem happend please try again later");
+            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
 
         
         await _context.Comments.AddAsync(comment);
@@ -34,7 +34,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
 
         if (comment.UserId != userId || comment == null)
         {
-            throw new Exception("Some error happend in delete the comment");
+            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
         }
         _context.Comments.Remove(comment);
         await _context.SaveChangesAsync();
@@ -49,7 +49,7 @@ public class CommentsCommandRepository : ICommentsCommandRepository
         Comment comment = await _context.Comments.FindAsync(commentId);
         if (comment == null || userId != comment.UserId)
         {
-            throw new Exception("Some error happend in update the comment");
+            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
         }
         comment.SetContent(newContent);
         await _context.SaveChangesAsync();
