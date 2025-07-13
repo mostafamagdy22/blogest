@@ -42,11 +42,12 @@ namespace blogest.infrastructure
             services.AddScoped<IImageStorageService, CloudinaryStorageService>();
             services.AddScoped<IEmailService, EmailService>();
 
-            Log.Logger = new LoggerConfiguration()
-                        .WriteTo.Console()
-                        .WriteTo.Seq("http://localhost:5341")
-                        .CreateLogger();
 
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .Enrich.FromLogContext()
+                .CreateLogger();
+            
             var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
             var dbUser = Environment.GetEnvironmentVariable("DB_USER");
             var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");

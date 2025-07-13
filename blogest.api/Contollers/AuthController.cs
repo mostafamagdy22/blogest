@@ -21,8 +21,10 @@ namespace blogest.api.Contollers
         private readonly IMediator _mediator;
         private readonly IAuthService _authService;
         private readonly IUsersRepository _usersRepository;
-        public AuthController(IUsersRepository usersRepository, IMediator mediator, IAuthService authService)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(ILogger<AuthController> logger, IUsersRepository usersRepository, IMediator mediator, IAuthService authService)
         {
+            _logger = logger;
             _usersRepository = usersRepository;
             _authService = authService;
             _mediator = mediator;
@@ -65,6 +67,7 @@ namespace blogest.api.Contollers
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] SignInCommand signInCommand)
         {
+            _logger.LogInformation("Login started at {Time}",DateTime.UtcNow);
             SignInResponse result = await _mediator.Send(signInCommand);
             if (!result.isAuth)
                 return Unauthorized(result);

@@ -269,6 +269,10 @@
               "target": "Package",
               "version": "[9.0.1-dev-02317, )"
             },
+            "Serilog.Sinks.Async": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[9.0.0, )"

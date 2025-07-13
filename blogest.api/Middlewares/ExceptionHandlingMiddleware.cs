@@ -1,5 +1,4 @@
 using FluentValidation;
-using System.Linq;
 namespace blogest.api.Middlewares;
 
 public class ExceptionHandlingMiddleware

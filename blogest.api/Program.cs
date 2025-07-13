@@ -26,11 +26,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // services 
 
-Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341")
-                .CreateLogger();
 
 builder.Host.UseSerilog();
 builder.Services.AddControllers();
@@ -130,6 +125,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<LoggingRequestMiddleware>();
+
 app.UseRouting();
 
 app.UseRateLimiter(new RateLimiterOptions
@@ -158,6 +155,8 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger";
     });
 }
+
+app.UseMiddleware<LoggingResponseMiddleware>();
 
 app.MapControllers();
 app.Run();
