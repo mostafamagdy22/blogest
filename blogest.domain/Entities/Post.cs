@@ -17,6 +17,7 @@ namespace blogest.domain.Entities
 		public List<Comment>? Comments { get; set; }
 		public List<PostCategory> PostCategories { get; set; }
 		public List<Like>? Likes { get; set; }
+		public ICollection<Save>? Saves { get; set; }
 		public Post()
 		{
 

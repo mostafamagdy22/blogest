@@ -12,6 +12,7 @@ namespace blogest.infrastructure.persistence
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<PostCategory> PostCategories { get; set; }
 		public DbSet<Like> Likes { get; set; }
+		public DbSet<Save> Saves { get; set; }
 		public BlogCommandContext(DbContextOptions<BlogCommandContext> options) : base(options)
 		{ }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,6 +24,7 @@ namespace blogest.infrastructure.persistence
 			modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 			modelBuilder.ApplyConfiguration(new CategoryConfiguration());
 			modelBuilder.ApplyConfiguration(new LikeConfiguration());
+			modelBuilder.ApplyConfiguration(new SaveConfiguration());
 		}
 	}
 }

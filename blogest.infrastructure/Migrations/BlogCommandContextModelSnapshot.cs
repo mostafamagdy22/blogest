@@ -295,6 +295,21 @@ namespace blogest.infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("blogest.domain.Entities.Save", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Saves");
+                });
+
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -490,6 +505,23 @@ namespace blogest.infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("blogest.domain.Entities.Save", b =>
+                {
+                    b.HasOne("blogest.domain.Entities.Post", "Post")
+                        .WithMany("Saves")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("blogest.infrastructure.Identity.AppUser", null)
+                        .WithMany("SavedPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("blogest.domain.Entities.Category", b =>
                 {
                     b.Navigation("PostCategories");
@@ -502,6 +534,8 @@ namespace blogest.infrastructure.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("PostCategories");
+
+                    b.Navigation("Saves");
                 });
 
             modelBuilder.Entity("blogest.infrastructure.Identity.AppUser", b =>
@@ -513,6 +547,8 @@ namespace blogest.infrastructure.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("SavedPosts");
                 });
 #pragma warning restore 612, 618
         }

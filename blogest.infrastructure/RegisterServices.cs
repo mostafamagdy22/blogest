@@ -20,6 +20,7 @@ using blogest.infrastructure.Configuration;
 using Hangfire;
 using Microsoft.Data.SqlClient;
 using Serilog;
+using blogest.application.Interfaces.repositories.Saves;
 
 namespace blogest.infrastructure
 {
@@ -41,7 +42,7 @@ namespace blogest.infrastructure
             services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
             services.AddScoped<IImageStorageService, CloudinaryStorageService>();
             services.AddScoped<IEmailService, EmailService>();
-
+            services.AddScoped<ISavesCommandRepository, SavesCommandRepository>();
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
