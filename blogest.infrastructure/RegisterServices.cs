@@ -21,6 +21,9 @@ using Hangfire;
 using Microsoft.Data.SqlClient;
 using Serilog;
 using blogest.application.Interfaces.repositories.Saves;
+using Elastic.Clients.Elasticsearch.Nodes;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 
 namespace blogest.infrastructure
 {
@@ -36,13 +39,25 @@ namespace blogest.infrastructure
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<ICommentsCommandRepository, CommentsCommandRepository>();
             services.AddScoped<ICommentsQueryRepository, CommentsQueryRepository>();
-            services.AddScoped<ICategoriesRepository, CategoriesCommandRepository>();
+            services.AddScoped<ICategoriesCommandRepository, CategoriesCommandRepository>();
+            services.AddScoped<ICategoriesQueryRepository, CategoriesQueryRepository>();
             services.AddScoped<ILikesCommandRepository, LikesCommandRepository>();
             services.AddScoped<ILikesQueryRepository, LikesQueryRepository>();
             services.AddScoped<IAuthorizationHandler, IsPostAuthorHandler>();
             services.AddScoped<IImageStorageService, CloudinaryStorageService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ISavesCommandRepository, SavesCommandRepository>();
+            services.AddScoped<ISearchService, ElasticSearchService>();
+
+            var elasticConfig = new ElasticSearchConfig();
+            configuration.GetSection("Elasticsearch").Bind(elasticConfig);
+
+            var settings = new ElasticsearchClientSettings(new Uri(elasticConfig.Url))
+            .CertificateFingerprint(Environment.GetEnvironmentVariable("CERTIFICATE"))
+            .Authentication(new BasicAuthentication("elastic",Environment.GetEnvironmentVariable("ELASTICSEARCH_PASSWORD")));
+
+            var client = new ElasticsearchClient(settings);
+            services.AddSingleton(client);
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)

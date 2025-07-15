@@ -13,4 +13,5 @@ public static class ErrorMessages
     public const string Conflict = "A conflict occurred with the current state of the resource.";
     public const string UnsupportedMediaType = "The media type is not supported.";
     public const string TooManyRequests = "Too many requests. Please slow down.";
+    public const string AddCategoryAtLeast = "Add category atleast to add post";
 }

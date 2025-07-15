@@ -5,7 +5,7 @@ using blogest.infrastructure.persistence;
 
 namespace blogest.infrastructure.Repositories;
 
-public class CategoriesCommandRepository : ICategoriesRepository
+public class CategoriesCommandRepository : ICategoriesCommandRepository
 {
     private readonly BlogCommandContext _context;
     public CategoriesCommandRepository(BlogCommandContext context)

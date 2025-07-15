@@ -7,8 +7,8 @@ namespace blogest.application.Features.handlers.Categories;
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CreateCategoryResponse>
 {
-    private readonly ICategoriesRepository _categoriesRepository;
-    public CreateCategoryCommandHandler(ICategoriesRepository categoriesRepository)
+    private readonly ICategoriesCommandRepository _categoriesRepository;
+    public CreateCategoryCommandHandler(ICategoriesCommandRepository categoriesRepository)
     {
         _categoriesRepository = categoriesRepository;
     }

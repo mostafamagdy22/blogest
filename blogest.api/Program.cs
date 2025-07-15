@@ -74,6 +74,7 @@ builder.Services.AddApiVersioning(options =>
     options.ReportApiVersions = true;
 });
 
+
 builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";

@@ -9,4 +9,5 @@ public class GetPostResponse
     public DateTime? PublishAt { get; set; }
     public string Publisher { get; set; } = string.Empty;
     public Guid UserId { get; set; }
+    public List<string> CategoryNames { get; set; } = new();
 }

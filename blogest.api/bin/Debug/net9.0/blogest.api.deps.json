@@ -117,6 +117,28 @@
           }
         }
       },
+      "Elastic.Clients.Elasticsearch/9.0.7": {
+        "dependencies": {
+          "Elastic.Transport": "0.9.2"
+        },
+        "runtime": {
+          "lib/net8.0/Elastic.Clients.Elasticsearch.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.7.0"
+          }
+        }
+      },
+      "Elastic.Transport/0.9.2": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0"
+        },
+        "runtime": {
+          "lib/net8.0/Elastic.Transport.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.9.2.0"
+          }
+        }
+      },
       "FluentValidation/12.0.0": {
         "runtime": {
           "lib/net8.0/FluentValidation.dll": {
@@ -816,6 +838,7 @@
           }
         }
       },
+      "Microsoft.CSharp/4.7.0": {},
       "Microsoft.Data.SqlClient/6.0.2": {
         "dependencies": {
           "Azure.Identity": "1.11.4",
@@ -2399,6 +2422,7 @@
           "BCrypt.Net-Next": "4.0.3",
           "CloudinaryDotNet": "1.27.6",
           "DotNetEnv": "3.1.1",
+          "Elastic.Clients.Elasticsearch": "9.0.7",
           "Hangfire": "1.8.20",
           "Hangfire.SqlServer": "1.8.20",
           "MailKit": "4.13.0",
@@ -2480,6 +2504,20 @@
       "sha512": "sha512-o4SqUVCq0pqHF/HYsZk6k22XGIVmvsDVo+Dy7l0ubq9uQ45JkXswrMRJmYvhGLXWFYF0M5OupMonytB+0zvpGQ==",
       "path": "dotnetenv/3.1.1",
       "hashPath": "dotnetenv.3.1.1.nupkg.sha512"
+    },
+    "Elastic.Clients.Elasticsearch/9.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-EdLRCO+/5Q5O2HUQ3fGOnH190/2hin8ykiM/O3gm40jmHs8pRqAbGER+MFZeWU4KoZQklJ1s3Ei/rpeiw4OK1A==",
+      "path": "elastic.clients.elasticsearch/9.0.7",
+      "hashPath": "elastic.clients.elasticsearch.9.0.7.nupkg.sha512"
+    },
+    "Elastic.Transport/0.9.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-evL2QL9tsjsWMuV/JAv4EyJmG0S//Np9z35qpWWn70+FiGiWYYsHgZEm7Vs4ad/CQh6YGMZcJ/G3len6+LzjUA==",
+      "path": "elastic.transport/0.9.2",
+      "hashPath": "elastic.transport.0.9.2.nupkg.sha512"
     },
     "FluentValidation/12.0.0": {
       "type": "package",
@@ -2816,6 +2854,13 @@
       "sha512": "sha512-IEYreI82QZKklp54yPHxZNG9EKSK6nHEkeuf+0Asie9llgS1gp0V1hw7ODG+QyoB7MuAnNQHmeV1Per/ECpv6A==",
       "path": "microsoft.codeanalysis.workspaces.msbuild/4.8.0",
       "hashPath": "microsoft.codeanalysis.workspaces.msbuild.4.8.0.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "path": "microsoft.csharp/4.7.0",
+      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
     },
     "Microsoft.Data.SqlClient/6.0.2": {
       "type": "package",
