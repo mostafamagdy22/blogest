@@ -18,10 +18,10 @@ public class CommentsQueryController : ControllerBase
         _mediator = mediator;
     }
     /// <summary>
-    /// Gets a comment by its ID.
+    /// Retrieves a comment by its unique identifier.
     /// </summary>
-    /// <param name="CommentId">The ID of the comment.</param>
-    /// <returns>The comment details.</returns>
+    /// <param name="CommentId">The unique identifier of the comment.</param>
+    /// <returns>The comment details if found, otherwise 404.</returns>
     [HttpGet("Get/{CommentId}")]
     public async Task<IActionResult> GetCommentById([FromRoute] Guid CommentId)
     {
@@ -31,12 +31,12 @@ public class CommentsQueryController : ControllerBase
         return Ok(response);
     }
     /// <summary>
-    /// Gets all comments on a post (paginated).
+    /// Retrieves all comments for a specific post with pagination.
     /// </summary>
-    /// <param name="PostId">The ID of the post.</param>
-    /// <param name="pageNumber">Page number (default 1).</param>
-    /// <param name="pageSize">Page size (default 10).</param>
-    /// <returns>Paginated list of comments.</returns>
+    /// <param name="PostId">The unique identifier of the post.</param>
+    /// <param name="pageNumber">The page number (default is 1).</param>
+    /// <param name="pageSize">The number of items per page (default is 10).</param>
+    /// <returns>Paginated list of comments for the post.</returns>
     [HttpGet("GetAll/{PostId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetAllCommentsByPostId([FromRoute] Guid PostId,int pageNumber = 1,int pageSize = 10)
@@ -46,10 +46,10 @@ public class CommentsQueryController : ControllerBase
         return Ok(response);
     }
     /// <summary>
-    /// Gets all comments made by a user.
+    /// Retrieves all comments made by a specific user.
     /// </summary>
-    /// <param name="UserId">The ID of the user.</param>
-    /// <returns>List of comments by user.</returns>
+    /// <param name="UserId">The unique identifier of the user.</param>
+    /// <returns>Paginated list of comments made by the user.</returns>
     [HttpGet("GetAllCommentsOfUser/{UserId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetAllCommentsOfUser([FromRoute] Guid UserId)

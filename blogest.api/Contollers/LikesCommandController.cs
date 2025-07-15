@@ -19,8 +19,8 @@ public class LikesCommandController : ControllerBase
     /// <summary>
     /// Adds a like to a post by the current user.
     /// </summary>
-    /// <param name="postId">The ID of the post to like.</param>
-    /// <returns>200 if successful, 400 if already liked or error.</returns>
+    /// <param name="postId">The unique identifier of the post to like.</param>
+    /// <returns>Returns 200 if the like is added successfully, otherwise 400.</returns>
     [HttpPost("AddLike/{postId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AddLike([FromRoute] Guid postId)
@@ -33,8 +33,8 @@ public class LikesCommandController : ControllerBase
     /// <summary>
     /// Removes a like from a post by the current user.
     /// </summary>
-    /// <param name="postId">The ID of the post to unlike.</param>
-    /// <returns>200 if successful, 404 if not found.</returns>
+    /// <param name="postId">The unique identifier of the post to unlike.</param>
+    /// <returns>Returns 200 if the like is removed successfully, otherwise 404.</returns>
     [HttpDelete("UnLike/{postId}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UnLike([FromRoute] Guid postId)

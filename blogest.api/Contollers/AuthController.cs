@@ -30,9 +30,9 @@ namespace blogest.api.Contollers
             _mediator = mediator;
         }
         /// <summary>
-        /// Logs out the current user and invalidates their session/token.
+        /// Logs out the current user and invalidates their session or token.
         /// </summary>
-        /// <returns>200 if logout successful, 400 if failed.</returns>
+        /// <returns>Returns 200 if logout is successful, otherwise 400.</returns>
         [HttpPost("LogOut")]
         [SwaggerResponse(StatusCodes.Status200OK, "if log out success")]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "if log out fail")]
@@ -49,8 +49,8 @@ namespace blogest.api.Contollers
         /// <summary>
         /// Registers a new user in the system.
         /// </summary>
-        /// <param name="signUpCommand">User registration data.</param>
-        /// <returns>200 if registration successful, 400 if failed.</returns>
+        /// <param name="signUpCommand">The data required for user registration.</param>
+        /// <returns>Returns 200 if registration is successful, otherwise 400.</returns>
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpCommand signUpCommand)
         {

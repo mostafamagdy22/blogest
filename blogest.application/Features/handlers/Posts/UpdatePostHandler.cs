@@ -17,12 +17,10 @@ public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, UpdatePostRe
     {
         UpdatePostResponse response = await _postsRepository.UpdatePost(request);
 
-        (string,GetPostResponse) search = (await _searchService.SearchAsync<GetPostResponse>(
-            ElasticsearchIndecis.articles
-            , "postId:" + request.postId.ToString())).FirstOrDefault()!;
+        string documentId = await _searchService.GetDocumentId<GetPostResponse>(request.postId);
 
         UpdatePostCommand updatedFields = new UpdatePostCommand(Title: response.Title,Content:response.Content,postId:request.postId);
-        await _searchService.UpdateDocumentAsync<GetPostResponse,UpdatePostCommand>(ElasticsearchIndecis.articles, search.Item1,updatedFields);
+        await _searchService.UpdateDocumentAsync<GetPostResponse,UpdatePostCommand>(ElasticsearchIndecis.articles, documentId,updatedFields);
 
         return response;
     }

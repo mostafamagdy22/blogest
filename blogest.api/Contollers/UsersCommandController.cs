@@ -20,6 +20,12 @@ public class UsersCommandController : ControllerBase
     {
         _mediator = mediator;
     }
+    /// <summary>
+    /// Uploads a profile photo for the current user.
+    /// </summary>
+    /// <param name="dto">The uploaded image data.</param>
+    /// <param name="backgroundJobClient">The Hangfire background job client.</param>
+    /// <returns>Returns 200 if the photo is uploaded successfully.</returns>
     [HttpPost("upload-photo")]
     [Consumes("multipart/form-data")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

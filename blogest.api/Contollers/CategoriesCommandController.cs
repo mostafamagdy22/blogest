@@ -20,8 +20,8 @@ namespace blogest.api.Contollers
         /// <summary>
         /// Creates a new category.
         /// </summary>
-        /// <param name="command">Category creation data.</param>
-        /// <returns>200 if successful, 400 if failed.</returns>
+        /// <param name="command">The data required to create a new category.</param>
+        /// <returns>Returns 200 if the category is created successfully, otherwise 400.</returns>
         [HttpPost("Create")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryCommand command)

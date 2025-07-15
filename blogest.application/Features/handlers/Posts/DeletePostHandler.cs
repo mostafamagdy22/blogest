@@ -17,10 +17,9 @@ public class DeletePostHandler : IRequestHandler<DeletePostCommand, DeletePostRe
     {
         DeletePostResponse response = await _postsRepository.DeletePost(request.postId);
 
-        (string,GetPostResponse) search = (await _searchService.SearchAsync<GetPostResponse>(ElasticsearchIndecis.articles
-        , "postId:" + request.postId)).FirstOrDefault();
+        string documentId = await _searchService.GetDocumentId<GetPostResponse>(request.postId);
 
-        await _searchService.DeleteAsync(ElasticsearchIndecis.articles,search.Item1);
+        await _searchService.DeleteAsync(ElasticsearchIndecis.articles,documentId);
 
         return response;
     }

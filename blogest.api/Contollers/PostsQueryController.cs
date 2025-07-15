@@ -15,10 +15,10 @@ public class PostsQueryController : ControllerBase
         _mediator = mediator;
     }
     /// <summary>
-    /// Gets a post by its ID.
+    /// Retrieves a post by its unique identifier.
     /// </summary>
-    /// <param name="postId">The ID of the post.</param>
-    /// <returns>The post details if found, 404 if not found.</returns>
+    /// <param name="postId">The unique identifier of the post.</param>
+    /// <returns>The post details if found, otherwise 404.</returns>
     [HttpGet("get/{postId}")]
     public async Task<IActionResult> GetPostByIdAsync([FromRoute] Guid postId)
     {
@@ -30,13 +30,13 @@ public class PostsQueryController : ControllerBase
     }
 
     /// <summary>
-    /// Gets all posts in a category with pagination and optional includes.
+    /// Retrieves all posts in a specific category with pagination and optional includes.
     /// </summary>
-    /// <param name="categoryId">The category ID.</param>
-    /// <param name="pageNumber">Page number (default 1).</param>
-    /// <param name="pageSize">Page size (default 10).</param>
-    /// <param name="include">Related data to include (optional).</param>
-    /// <returns>Paginated list of posts.</returns>
+    /// <param name="categoryId">The unique identifier of the category.</param>
+    /// <param name="pageNumber">The page number (default is 1).</param>
+    /// <param name="pageSize">The number of items per page (default is 10).</param>
+    /// <param name="include">Related data to include (optional, e.g., comments).</param>
+    /// <returns>Paginated list of posts in the category.</returns>
     [HttpGet("getAllByCategory/{categoryId}")]
     public async Task<IActionResult> GetAllPostsByCategory([FromRoute] int categoryId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? include = "")
     {
@@ -48,13 +48,13 @@ public class PostsQueryController : ControllerBase
     }
 
     /// <summary>
-    /// Gets all posts by a user with pagination and optional includes.
+    /// Retrieves all posts created by a specific user with pagination and optional includes.
     /// </summary>
-    /// <param name="userId">The user ID.</param>
-    /// <param name="include">Related data to include (optional).</param>
-    /// <param name="pageNumber">Page number (default 1).</param>
-    /// <param name="pageSize">Page size (default 10).</param>
-    /// <returns>Paginated list of posts by user.</returns>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="include">Related data to include (optional, e.g., comments).</param>
+    /// <param name="pageNumber">The page number (default is 1).</param>
+    /// <param name="pageSize">The number of items per page (default is 10).</param>
+    /// <returns>Paginated list of posts created by the user.</returns>
     [HttpGet("getAllByUser/{userId}")]
     public async Task<IActionResult> GetAllPostsByUser([FromRoute] Guid userId, [FromQuery] string? include, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
