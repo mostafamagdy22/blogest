@@ -36,6 +36,7 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, CreatePostRe
         List<string> categories = await _categoriesQueryRepository.GetCategoriesByPostId(post.PostId);
         GetPostResponse postDto = new GetPostResponse
         {
+            PostId = post.PostId,
             Publisher = user.UserName!,
             PublishAt = post.PublishedAt,
             UserId = user.userId,
@@ -45,7 +46,7 @@ public class CreatePostHandler : IRequestHandler<CreatePostCommand, CreatePostRe
             Comments = null
         };
 
-        await _searchService.IndexAsync<GetPostResponse>(postDto,"articles");
+        await _searchService.IndexAsync<GetPostResponse>(postDto,ElasticsearchIndecis.articles);
 
         if (post.PostId != null)
             return new CreatePostResponseDto(SuccessMessages.Created, post.PostId, true);

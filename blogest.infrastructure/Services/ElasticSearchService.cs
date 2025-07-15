@@ -32,7 +32,7 @@ public class ElasticSearchService : ISearchService
         }
     }
 
-    public async Task<IEnumerable<T>> SearchAsync<T>(string indexName, string query, int pageNumber = 1, int pageSize = 10)
+    public async Task<IEnumerable<(string Id, T Document)>> SearchAsync<T>(string indexName, string query, int pageNumber = 1, int pageSize = 10)
     {
         SearchResponse<T> response = await _client.SearchAsync<T>(s => s
         .Indices(indexName)
@@ -41,9 +41,25 @@ public class ElasticSearchService : ISearchService
         .Query(q => q
         .QueryString(qs => qs.Query(query))));
 
-        if (!response.IsValidResponse)
-            throw new Exception(ErrorMessages.BadRequest);
+        var hit = response.Hits.FirstOrDefault();
 
-        return response.Documents;
+        if (hit is null)
+            throw new Exception(ErrorMessages.NotFound);
+
+        var documentId = hit.Id;
+        var document = hit.Source;
+
+        return response.Hits.Select(h => (h.Id,h.Source))!;
+    }
+
+    public async Task UpdateDocumentAsync<TDoc, TPartial>(string indexName, string documentId, TPartial updatedFields)
+    {
+        var response = await _client.UpdateAsync(new UpdateRequest<TDoc, TPartial>(indexName, documentId)
+        {
+            Doc = updatedFields
+        });
+
+        if (!response.IsValidResponse)
+            throw new NotImplementedException(ErrorMessages.BadRequest);
     }
 }
