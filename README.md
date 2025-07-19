@@ -1,56 +1,105 @@
-Blogest
-Blogest is a modern, scalable blogging platform built with ASP.NET Core (.NET 9), supporting advanced features like authentication, posts, comments, likes, categories, search, background jobs, and more. The project follows clean architecture principles and is ready for production and cloud deployment.
+# Blogest
 
-Features
-Authentication & Authorization: JWT, Google OAuth, ASP.NET Identity, custom policies.
-Posts & Comments: CRUD operations, pagination, edit history, and moderation.
-Likes & Saves: Users can like and save posts.
-Categories: Organize posts by categories.
-Search: Full-text search for posts, comments, and users.
-Background Jobs: Hangfire integration for tasks like image uploads.
-Media Uploads: Cloudinary integration for image storage.
-Notifications & Emails: SMTP support for transactional emails.
-Logging & Monitoring: Serilog, Seq, and Elasticsearch integration.
-API Versioning & Documentation: Swagger/OpenAPI, XML comments for all endpoints.
-Unit Testing: Project structure ready for unit and integration tests.
-Project Structure
+**Blogest** is a modern, scalable blogging platform built with **ASP.NET Core (.NET 9)**. It supports advanced features like authentication, posts, comments, likes, categories, search, background jobs, and more. The project follows **Clean Architecture** principles and is production-ready for **cloud deployment**.
 
-blogest.slnblogest.api/           # ASP.NET Core Web API (main entry point)blogest.application/   # Application layer (business logic, CQRS, MediatR)blogest.domain/        # Domain layer (entities, value objects, constants)blogest.infrastructure/# Infrastructure (EF Core, Identity, Cloudinary, Hangfire, Serilog, etc.)unittests/             # Unit and integration testsvscDB/                 # Database scripts and migrations
-Getting Started
-Prerequisites
-.NET 9 SDK
-SQL Server (local or cloud)
-Node.js (if you want to run a frontend)
-Seq (for logging, optional)
-Cloudinary account (for image uploads)
-Configuration
-Copy .env and appsettings.json files and update with your credentials (DB, Cloudinary, SMTP, etc).
-Set up connection strings for both command and query databases.
-Configure logging endpoints (Seq, Elasticsearch) as needed.
-Database
-Run EF Core migrations to set up the database:
+---
 
-dotnet ef database update --project blogest.infrastructure
-Running the API
-Start the API:
+## 🚀 Features
 
-dotnet run --project blogest.api
-The API will be available at https://localhost:5294 (or your configured port).
-Background Jobs
-Hangfire dashboard is available at /hangfire endpoint.
-API Documentation
-Swagger UI is available at /swagger.
-All endpoints are documented with XML comments.
-Testing
-Unit tests are located in the unittests folder.
-Run tests with:
+- **Authentication & Authorization**  
+  JWT, Google OAuth, ASP.NET Identity, and custom policies.
 
-dotnet test
-Contributing
-Contributions are welcome! Please open issues or submit pull requests for improvements, bug fixes, or new features.
+- **Posts & Comments**  
+  CRUD operations, pagination, edit history, and moderation.
 
-License
-This project is licensed under the MIT License.
+- **Likes & Saves**  
+  Users can like and save posts.
 
-If you want this README saved as README.md in your repo, let me know!
+- **Categories**  
+  Posts are organized into categories.
+
+- **Search**  
+  Full-text search for posts,using Elasticsearch.
+
+- **Background Jobs**  
+  Integrated with Hangfire for tasks like image uploads.
+
+- **Media Uploads**  
+  Cloudinary integration for image storage.
+
+- **Notifications & Emails**  
+  SMTP support for sending reset password emails.
+
+- **Logging & Monitoring**  
+  Serilog, Seq, and Elasticsearch for centralized logging.
+
+- **API Versioning & Documentation**  
+  Swagger/OpenAPI, with XML comments for every endpoint.
+
+- **Testing**  
+  The structure supports unit and integration tests.
+
+---
+
+## 📁 Project Structure
+
+
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+
+- [.NET 9 SDK](https://dotnet.microsoft.com/)
+- SQL Server (local or cloud)
+- Node.js (optional, if frontend is used)
+- [Seq](https://datalust.co/seq) (optional, for logging)
+- Cloudinary account (for image uploads)
+
+---
+
+## 🔧 Configuration
+
+1- cp .env.example .env:
+
+DB_USER=
+DB_PASSWORD=
+DB_SERVER=
+DB_NAME=
+
+ISSUER=
+SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+Cloudinary__CloudName=
+Cloudinary__ApiKey=
+Cloudinary__ApiSecret=
+
+
+Smtp__Host=sandbox.smtp.mailtrap.io
+Smtp__Port=587
+Smtp__UserName=
+Smtp__Password=
+App__ClientBaseUrl=https://localhost:3000
+
+LOG_PATH=/var/log/blogest
+
+ELASTICSEARCH_PASSWORD=
+CERTIFICATE=
+
+2. Update the values for:
+   - Database connection strings (for both command and query DBs)
+   - Cloudinary credentials
+   - SMTP settings
+   - Seq / Elasticsearch endpoints (for logging)
+
+---
+
+## 🧩 Database
+
+Run the following command to apply EF Core migrations:
+
+```bash
+dotnet ef database update --project blogest.infrastructure
+
 
