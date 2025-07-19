@@ -3,14 +3,23 @@ using Moq;
 using blogest.application.Interfaces.services;
 using blogest.infrastructure.Services;
 using blogest.infrastructure.persistence;
-public class JwtServiceTests
+using Microsoft.EntityFrameworkCore;
+
+namespace blogest.application.tests.Services
 {
-    [Fact]
-    public void GenerateRefreshToken_Should_Return_NonEmpty_String()
+    public class JwtServiceTests
     {
-        var contextMock = new Mock<BlogCommandContext>(null);
-        var service = new JwtService(contextMock.Object);
-        var token = service.GenerateRefreshToken();
-        Assert.False(string.IsNullOrWhiteSpace(token));
+        [Fact]
+        public void GenerateRefreshToken_Should_Return_NonEmpty_String()
+        {
+            var options = new DbContextOptionsBuilder<BlogCommandContext>()
+    .UseInMemoryDatabase("JwtServiceTestDb")
+    .Options;
+            var context = new BlogCommandContext(options);
+            var service = new JwtService(context);
+            var token = service.GenerateRefreshToken();
+
+            Assert.False(string.IsNullOrWhiteSpace(token));
+        }
     }
 }

@@ -12,16 +12,16 @@ namespace blogest.infrastructure.persistence
             var optionsBuilder = new DbContextOptionsBuilder<BlogCommandContext>();
 
             Env.Load();
-            string dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
-            string dbUser = Environment.GetEnvironmentVariable("DB_USER");
-            string password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={dbServer};Database=blogestCommand;User Id={dbUser};Password={password};TrustServerCertificate=True;";
+            var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+            var dbUser = Environment.GetEnvironmentVariable("DB_USER");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+            var connectionString = $"Server={dbServer}; Database={dbName}; User Id={dbUser}; Password={dbPassword}; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;";
 
 
             Console.WriteLine("== Connection String from ENV ==");
             Console.WriteLine(connectionString ?? "NULL");
-            if (string.IsNullOrEmpty(password))
-                throw new InvalidOperationException(blogest.domain.Constants.ErrorMessages.BadRequest);
 
             optionsBuilder.UseSqlServer(connectionString, b =>
             b.MigrationsAssembly("blogest.infrastructure"));

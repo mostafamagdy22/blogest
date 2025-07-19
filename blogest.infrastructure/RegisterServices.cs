@@ -31,7 +31,6 @@ namespace blogest.infrastructure
     {
         public static IServiceCollection AddInfraStructure(this IServiceCollection services, IConfiguration configuration)
         {
-            DotNetEnv.Env.Load();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IPostsCommandRepository, PostsCommandRepository>();
             services.AddScoped<IPostsQueryRepository, PostsQueryRepository>();
@@ -54,7 +53,7 @@ namespace blogest.infrastructure
 
             var settings = new ElasticsearchClientSettings(new Uri(elasticConfig.Url))
             .CertificateFingerprint(Environment.GetEnvironmentVariable("CERTIFICATE"))
-            .Authentication(new BasicAuthentication("elastic",Environment.GetEnvironmentVariable("ELASTICSEARCH_PASSWORD")));
+            .Authentication(new BasicAuthentication("elastic", Environment.GetEnvironmentVariable("ELASTICSEARCH_PASSWORD")));
 
             var client = new ElasticsearchClient(settings);
             services.AddSingleton(client);
@@ -63,11 +62,19 @@ namespace blogest.infrastructure
                 .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
                 .CreateLogger();
-            
+
             var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
             var dbUser = Environment.GetEnvironmentVariable("DB_USER");
             var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            var connectionString = $"Server={dbServer};Database=blogestCommand;User Id={dbUser};Password={dbPassword};TrustServerCertificate=True;";
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+
+            Console.WriteLine("DB_NAME = " + dbName);
+            Console.WriteLine("DB_USER = " + dbUser);
+            Console.WriteLine("DB_PASSWORD = " + dbPassword);
+            Console.WriteLine("DB_SERVER = " + dbServer);
+
+
+            var connectionString = $"Server={dbServer}; Database={dbName}; User Id={dbUser}; Password={dbPassword}; Encrypt=True; TrustServerCertificate=True; MultipleActiveResultSets=True;";
 
             services.AddHangfire(options =>
             {

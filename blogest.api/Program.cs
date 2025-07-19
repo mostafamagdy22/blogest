@@ -21,6 +21,10 @@ using Hangfire;
 using blogest.api.HangFireJobs;
 
 Env.Load("../blogest.infrastructure/.env");
+// Console.WriteLine("DB_NAME = " + Environment.GetEnvironmentVariable("DB_NAME"));
+// Console.WriteLine("DB_USER = " + Environment.GetEnvironmentVariable("DB_USER"));
+// Console.WriteLine("DB_PASSWORD = " + Environment.GetEnvironmentVariable("DB_PASSWORD"));
+// Console.WriteLine("DB_SERVER = " + Environment.GetEnvironmentVariable("DB_SERVER"));
 
 var builder = WebApplication.CreateBuilder(args);
 

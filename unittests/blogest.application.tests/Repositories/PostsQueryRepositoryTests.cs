@@ -2,18 +2,29 @@ using Xunit;
 using Moq;
 using blogest.infrastructure.Repositories;
 using blogest.infrastructure.persistence;
-using blogest.application.Interfaces.repositories.Posts;
+using blogest.application.Interfaces.repositories.Comments;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
-public class PostsQueryRepositoryTests
+namespace blogest.application.tests.Repositories
 {
-    [Fact]
-    public void Constructor_Should_Instantiate()
+    public class PostsQueryRepositoryTests
     {
-        var commentsRepoMock = new Mock<ICommentsQueryRepository>();
-        var contextMock = new Mock<BlogCommandContext>(null);
-        var mapperMock = new Mock<IMapper>();
-        var repo = new PostsQueryRepository(commentsRepoMock.Object, contextMock.Object, mapperMock.Object);
-        Assert.NotNull(repo);
+        [Fact]
+        public void Constructor_Should_Instantiate()
+        {
+            var options = new DbContextOptionsBuilder<BlogCommandContext>()
+                .UseInMemoryDatabase("TestDb_PostsQueryRepo")
+                .Options;
+
+            var context = new BlogCommandContext(options);
+
+            var commentsRepoMock = new Mock<ICommentsQueryRepository>();
+            var mapperMock = new Mock<IMapper>();
+
+            var repo = new PostsQueryRepository(commentsRepoMock.Object, context, mapperMock.Object);
+
+            Assert.NotNull(repo);
+        }
     }
 }

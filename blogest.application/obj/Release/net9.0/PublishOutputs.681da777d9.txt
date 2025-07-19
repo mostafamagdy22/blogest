@@ -1,0 +1,15 @@
+/home/mostafa/projects/blogest/out/blogest.application.dll
+/home/mostafa/projects/blogest/out/blogest.application.deps.json
+/home/mostafa/projects/blogest/out/blogest.application.pdb
+/home/mostafa/projects/blogest/out/AutoMapper.dll
+/home/mostafa/projects/blogest/out/FluentValidation.dll
+/home/mostafa/projects/blogest/out/FluentValidation.DependencyInjectionExtensions.dll
+/home/mostafa/projects/blogest/out/MediatR.dll
+/home/mostafa/projects/blogest/out/MediatR.Contracts.dll
+/home/mostafa/projects/blogest/out/Microsoft.Extensions.Configuration.dll
+/home/mostafa/projects/blogest/out/Microsoft.Extensions.Configuration.Abstractions.dll
+/home/mostafa/projects/blogest/out/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/home/mostafa/projects/blogest/out/Microsoft.Extensions.Options.dll
+/home/mostafa/projects/blogest/out/Microsoft.Extensions.Primitives.dll
+/home/mostafa/projects/blogest/out/blogest.domain.dll
+/home/mostafa/projects/blogest/out/blogest.domain.pdb

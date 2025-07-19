@@ -1,0 +1,3 @@
+/home/mostafa/projects/blogest/out/blogest.domain.dll
+/home/mostafa/projects/blogest/out/blogest.domain.deps.json
+/home/mostafa/projects/blogest/out/blogest.domain.pdb
