@@ -60,7 +60,7 @@
 
 ## 🔧 Configuration
 
-1- cp .env.example .env:
+### 1- cp .env.example .env:
 
 DB_USER=
 DB_PASSWORD=
