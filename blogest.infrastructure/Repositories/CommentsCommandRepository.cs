@@ -18,11 +18,12 @@ public class CommentsCommandRepository : ICommentsCommandRepository
         Guid? userIdFromCookies = _usersRepository.GetUserIdFromCookies();
 
         if (comment.UserId != userIdFromCookies)
-            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
+            return new CreateCommentResponse(comment.CommentId, comment.PostId, comment.UserId, blogest.domain.Constants.ErrorMessages.Unauthorized, false);
 
-        
         await _context.Comments.AddAsync(comment);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result < 1)
+            return new CreateCommentResponse(comment.CommentId, comment.PostId, comment.UserId, blogest.domain.Constants.ErrorMessages.InternalServerError, false);
 
         return new CreateCommentResponse(comment.CommentId, comment.PostId, comment.UserId, "Comment created successfully", true);
     }
@@ -30,30 +31,35 @@ public class CommentsCommandRepository : ICommentsCommandRepository
     public async Task<DeleteCommentResponse> DeleteComment(Guid commentId)
     {
         Guid? userId = _usersRepository.GetUserIdFromCookies();
-        Comment comment = await _context.Comments.FindAsync(commentId);
+        Comment? comment = await _context.Comments.FindAsync(commentId);
 
-        if (comment.UserId != userId || comment == null)
-        {
-            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
-        }
+        if (comment == null)
+            return new DeleteCommentResponse(Message: blogest.domain.Constants.ErrorMessages.NotFound, CommentId: commentId, IsSuccess: false);
+        if (comment.UserId != userId)
+            return new DeleteCommentResponse(Message: blogest.domain.Constants.ErrorMessages.Unauthorized, CommentId: commentId, IsSuccess: false);
+
         _context.Comments.Remove(comment);
-        await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+        if (result < 1)
+            return new DeleteCommentResponse(Message: blogest.domain.Constants.ErrorMessages.InternalServerError, CommentId: commentId, IsSuccess: false);
 
-        return new DeleteCommentResponse(Message: $"Comment {commentId} deleted",
-        CommentId:commentId,IsSuccess:true);
+        return new DeleteCommentResponse(Message: $"Comment {commentId} deleted", CommentId: commentId, IsSuccess: true);
     }
 
     public async Task<UpdateCommentResponse> UpdateComment(Guid commentId, string newContent)
     {
         Guid? userId = _usersRepository.GetUserIdFromCookies();
-        Comment comment = await _context.Comments.FindAsync(commentId);
-        if (comment == null || userId != comment.UserId)
-        {
-            throw new Exception(blogest.domain.Constants.ErrorMessages.InternalServerError);
-        }
-        comment.SetContent(newContent);
-        await _context.SaveChangesAsync();
+        Comment? comment = await _context.Comments.FindAsync(commentId);
+        if (comment == null)
+            return new UpdateCommentResponse(Message: blogest.domain.Constants.ErrorMessages.NotFound, IsSuccess: false, NewContent: null, CommentId: commentId);
+        if (userId != comment.UserId)
+            return new UpdateCommentResponse(Message: blogest.domain.Constants.ErrorMessages.Unauthorized, IsSuccess: false, NewContent: null, CommentId: commentId);
 
-        return new UpdateCommentResponse(Message:$"Comment {commentId} updated successfully",IsSuccess:true,NewContent:comment.Content,CommentId:commentId);
+        comment.SetContent(newContent);
+        var result = await _context.SaveChangesAsync();
+        if (result < 1)
+            return new UpdateCommentResponse(Message: blogest.domain.Constants.ErrorMessages.InternalServerError, IsSuccess: false, NewContent: null, CommentId: commentId);
+
+        return new UpdateCommentResponse(Message: $"Comment {commentId} updated successfully", IsSuccess: true, NewContent: comment.Content, CommentId: commentId);
     }
 }

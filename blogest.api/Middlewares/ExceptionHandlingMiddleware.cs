@@ -19,28 +19,14 @@ public class ExceptionHandlingMiddleware
         }
         catch (ValidationException ex)
         {
-            _logger.LogError(ex, "Unhandled exception");
+            _logger.LogError(ex, "Validation exception");
             context.Response.ContentType = "application/json";
-
-            switch (ex)
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new
             {
-                case ValidationException validationException:
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    await context.Response.WriteAsJsonAsync(new
-                    {
-                        error = "Validation Failed",
-                        details = validationException.Errors.Select(e =>
-                        new { field = e.PropertyName, message = e.ErrorMessage })
-                    });
-                    break;
-                default:
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    await context.Response.WriteAsJsonAsync(new
-                    {
-                        error = "Internal Server Errorrwqrqwr"
-                    });
-                    break;
-            }
+                error = "Validation Failed",
+                details = ex.Errors.Select(e => new { field = e.PropertyName, message = e.ErrorMessage })
+            });
         }
         catch (Exception ex)
         {
@@ -49,7 +35,8 @@ public class ExceptionHandlingMiddleware
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(new
             {
-                error = $"Internal Server Error, problem is {ex.InnerException}"
+                error = "Internal Server Error",
+                details = ex.Message
             });
         }
     }

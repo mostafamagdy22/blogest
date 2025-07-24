@@ -33,4 +33,5 @@ public interface IPostsQueryRepository
     /// <returns>Paginated posts response for the user.</returns>
     public Task<GetPostsByCategoryResponse> GetPostsByUser(GetPostsByUserIdQuery query);
     public Task<GetUserLikesResponse> GetUserLikes(GetUserLikesQuery query);
+    public Task<GetPostsByCategoryResponse> GetSavePostsByUser(Guid userId,string? include,int pageNumber = 1,int pageSize = 10);
 }

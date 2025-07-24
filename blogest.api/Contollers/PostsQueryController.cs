@@ -1,12 +1,16 @@
 using blogest.application.DTOs.responses.Posts;
 using blogest.application.Features.queries.Posts;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogest.api.Contollers;
+
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PostsQueryController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -73,10 +77,21 @@ public class PostsQueryController : ControllerBase
     /// <param name="pageSize">Page size (default 10).</param>
     /// <returns>Paginated list of liked posts.</returns>
     [HttpGet("liked-by-user/{userId}")]
-    public async Task<IActionResult> GetPostsLikedByUser([FromRoute] Guid userId,[FromQuery] string? include,[FromQuery]int pageNumber = 1,[FromQuery]int pageSize = 10)
+    public async Task<IActionResult> GetPostsLikedByUser([FromRoute] Guid userId, [FromQuery] string? include, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        GetUserLikesQuery query = new GetUserLikesQuery(userId,include,pageNumber,pageSize);
+        GetUserLikesQuery query = new GetUserLikesQuery(userId, include, pageNumber, pageSize);
         GetUserLikesResponse response = await _mediator.Send(query);
+        return Ok(response);
+    }
+    [HttpGet("saved-by-user/{userId}")]
+    public async Task<IActionResult> GetSavePostsByUser([FromRoute] Guid userId, [FromQuery] string? include, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        GetSavePostsOfUser query = new GetSavePostsOfUser(userId, include, pageNumber, pageSize);
+        GetPostsByCategoryResponse response = await _mediator.Send(query);
+
+        if (!response.IsSuccess)
+            return BadRequest(response.Message);
+
         return Ok(response);
     }
 }
